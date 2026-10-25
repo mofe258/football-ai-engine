@@ -2,8 +2,6 @@
 ================================================================================
 LIQUID GLASS AI SPORTS TERMINAL & MULTI-MARKET PREDICTION SUITE
 ================================================================================
-Modern Minimalist Monochrome with Organic Liquid Gradient Mesh & Glassmorphism
-================================================================================
 """
 
 import os
@@ -32,12 +30,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Injected Fluid Liquid Tokens, Typography, and Glassmorphic Components
+# Fluid Liquid Tokens, Typography, and Glassmorphic Components
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-    /* Global Viewport Reset with Fluid Ambient Liquid Backing */
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         background-color: #06070a !important;
@@ -54,21 +51,18 @@ st.markdown("""
         background: transparent !important;
     }
 
-    /* Fluid Clamp Containers */
     .block-container {
         padding-top: clamp(1.5rem, 3vw, 3rem) !important;
         padding-bottom: clamp(2rem, 5vw, 5rem) !important;
         max-width: 1200px !important;
     }
 
-    /* Sidebar Glass Overhaul */
     [data-testid="stSidebar"] {
         background: rgba(10, 12, 18, 0.8) !important;
         backdrop-filter: blur(24px) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
 
-    /* Hero Editorial Typography */
     .hero-container {
         padding: clamp(1.5rem, 4vw, 3.5rem) 0 clamp(1rem, 2vw, 2rem) 0;
     }
@@ -105,7 +99,6 @@ st.markdown("""
         margin: 0;
     }
 
-    /* Modern Liquid Glass Match Cards */
     .liquid-card {
         background: rgba(18, 18, 28, 0.65);
         backdrop-filter: blur(20px);
@@ -125,7 +118,6 @@ st.markdown("""
         box-shadow: 0 24px 48px -18px rgba(255, 0, 122, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
     }
 
-    /* Subdued Glass Metrics Grid */
     .metrics-bar {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -166,7 +158,6 @@ st.markdown("""
         margin-top: 2px;
     }
 
-    /* Vibrant Gradient Edge Pills */
     .pill-boom {
         background: linear-gradient(135deg, #FF007A 0%, #FF4D4D 100%);
         color: #FFFFFF !important;
@@ -192,7 +183,6 @@ st.markdown("""
         box-shadow: 0 4px 14px rgba(0, 240, 255, 0.25);
     }
 
-    /* Native Controls Theming (Tabs & Radio Buttons) */
     div[role="radiogroup"] {
         background: rgba(18, 18, 28, 0.5) !important;
         padding: 5px !important;
@@ -339,7 +329,6 @@ class CompleteMarketCalculator:
                 ft_matrix[i, j] = poisson.pmf(i, lambda_h) * poisson.pmf(j, lambda_a)
         ft_matrix /= np.sum(ft_matrix)
 
-        # Full-Catalog Probabilities
         denom = p_home_ml + p_away_ml + 1e-9
         p_dnb_h = p_home_ml / denom
         p_dnb_a = p_away_ml / denom
@@ -378,7 +367,6 @@ class CompleteMarketCalculator:
 # =====================================================================
 
 def main():
-    # --- HERO EDITORIAL HEADER ---
     st.markdown(f"""
     <div class="hero-container">
         <div class="hero-badge">{ICONS['sparkles']} Autonomous Intelligence Core</div>
@@ -389,7 +377,6 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # Top Control Bar (Navigation & Schedule Mode)
     col_nav, col_btn = st.columns([4, 1])
     with col_nav:
         selected_mode = st.radio(
@@ -405,7 +392,6 @@ def main():
 
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
-    # --- VIEW 1: ACTIVE LIVE FIXTURES ---
     if selected_mode == "Active Fixtures":
         with st.spinner("Streaming confirmed fixture schedules..."):
             grouped_matches = RealTimeFixtureResearcher.fetch_fixtures(days_ahead=2)
@@ -420,7 +406,6 @@ def main():
             """, unsafe_allow_html=True)
             return
 
-        # Day selection pills
         available_days = [k for k, v in grouped_matches.items() if len(v) > 0]
         selected_day = st.radio("Matchday:", available_days, horizontal=True)
 
@@ -429,11 +414,9 @@ def main():
         for match in fixtures_to_show:
             h, a, comp, kickoff = match["home"], match["away"], match["comp"], match["kickoff"]
 
-            # Pull cached prediction
             rep = get_cached_prediction(h, a)
             calc = CompleteMarketCalculator.calculate(rep["xg"]["home_xg"], rep["xg"]["away_xg"], rep["1x2"])
 
-            # Compute Banker & Boom picks
             p_1x = rep["double_chance"]["1X (Home or Draw)"]
             p_x2 = rep["double_chance"]["X2 (Draw or Away)"]
             safe_pick = "1X Double Chance" if p_1x >= p_x2 else "X2 Double Chance"
@@ -446,7 +429,6 @@ def main():
                 calc["btts"]["GG (Yes)"] if "Both" in boom_pick else rep["1x2"]["Home Win"]
             )
 
-            # RENDER LIQUID GLASS CARD
             st.markdown(f"""
             <div class="liquid-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -460,7 +442,7 @@ def main():
 
                 <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px;">
                     <h2 style="font-size: clamp(1.4rem, 2.5vw, 2.1rem); font-weight: 800; letter-spacing: -0.03em; margin: 0; color: #FFFFFF;">
-                        {h} <span style="background: var(--accent-liquid); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 300;">vs</span> {a}
+                        {h} <span style="background: linear-gradient(135deg, #FF007A 0%, #FF4D4D 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 300;">vs</span> {a}
                     </h2>
                     <div style="display: flex; gap: 8px;">
                         <span class="pill-safe">{ICONS['shield']} {safe_pick}</span>
@@ -493,7 +475,6 @@ def main():
             </div>
             """, unsafe_allow_html=True)
 
-            # Expandable Full Market Catalog
             with st.expander(f"Inspect Complete Market Catalog for {h} vs {a}"):
                 t1, t2, t3, t4 = st.tabs(["Match Winner & DNB", "Goals & Totals", "Half-Time", "Multi-Goal & Acca"])
 
@@ -521,7 +502,6 @@ def main():
 
             st.write("")
 
-    # --- VIEW 2: SIMULATOR SANDBOX ---
     elif selected_mode == "Simulator Sandbox":
         st.markdown("""
         <div class="liquid-card">
@@ -545,3 +525,30 @@ def main():
             <div class="liquid-card" style="margin-top: 1.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <span class="pill-boom">{ICONS['bolt']} Simulation Output</span>
+                    <span style="font-size: 12px; color: #8E9BAE;">Confidence: {rep['confidence']}/10</span>
+                </div>
+                <h2 style="margin: 0 0 1rem 0; color: #FFFFFF;">{home_sim} vs {away_sim}</h2>
+                <div class="metrics-bar">
+                    <div class="metric-cell">
+                        <div class="cell-label">Primary Selection</div>
+                        <div class="cell-value" style="color: #00F0FF;">{rep['1x2']['Selection']}</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="cell-label">Over 2.5 Goals</div>
+                        <div class="cell-value">{calc['totals']['Over 2.5']}%</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="cell-label">Both Teams to Score</div>
+                        <div class="cell-value">{calc['btts']['GG (Yes)']}%</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="cell-label">Exact Score</div>
+                        <div class="cell-value" style="color: #FF007A;">{calc['top_score'][0]}</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+
+if __name__ == "__main__":
+    main()
