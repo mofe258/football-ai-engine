@@ -7,6 +7,7 @@ LIQUID GLASS AI SPORTS TERMINAL & MULTI-MARKET PREDICTION SUITE
 import os
 import sys
 import time
+import textwrap
 import requests
 import numpy as np
 import pandas as pd
@@ -20,7 +21,7 @@ from football_engine import build_or_load_pipeline
 
 
 # =====================================================================
-# 1. UI SYSTEM CONFIGURATION & INJECTED STYLESHEET
+# 1. UI SYSTEM CONFIGURATION & HELPER
 # =====================================================================
 
 st.set_page_config(
@@ -30,8 +31,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+def render_html(html_str: str):
+    """Safely strips markdown indentation so HTML never turns into a code block."""
+    st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
+
+
 # Fluid Liquid Tokens, Typography, and Glassmorphic Components
-st.markdown("""
+render_html("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -225,7 +231,7 @@ st.markdown("""
         font-size: 13px !important;
     }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 
 # =====================================================================
@@ -367,7 +373,7 @@ class CompleteMarketCalculator:
 # =====================================================================
 
 def main():
-    st.markdown(f"""
+    render_html(f"""
     <div class="hero-container">
         <div class="hero-badge">{ICONS['sparkles']} Autonomous Intelligence Core</div>
         <h1 class="hero-title">Predictive Sports Engine.</h1>
@@ -375,7 +381,7 @@ def main():
             Synthesizing shifted rolling features, bivariate Poisson distributions, and real-time contextual news into high-probability betting selections.
         </p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     col_nav, col_btn = st.columns([4, 1])
     with col_nav:
@@ -398,12 +404,12 @@ def main():
 
         total_games = sum(len(v) for v in grouped_matches.values())
         if total_games == 0:
-            st.markdown("""
+            render_html("""
             <div class="liquid-card" style="text-align: center; padding: 4rem 2rem;">
                 <h3 style="color: #8E9BAE; margin-bottom: 8px;">No Fixtures Scheduled</h3>
                 <p style="color: #505B6E; margin: 0;">Monitored leagues are currently inactive today. Switch to the Simulator to analyze any club.</p>
             </div>
-            """, unsafe_allow_html=True)
+            """)
             return
 
         available_days = [k for k, v in grouped_matches.items() if len(v) > 0]
@@ -429,7 +435,7 @@ def main():
                 calc["btts"]["GG (Yes)"] if "Both" in boom_pick else rep["1x2"]["Home Win"]
             )
 
-            st.markdown(f"""
+            render_html(f"""
             <div class="liquid-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 8px; color: #8E9BAE; font-size: 12px; font-weight: 600; text-transform: uppercase;">
@@ -473,7 +479,7 @@ def main():
                     </div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
             with st.expander(f"Inspect Complete Market Catalog for {h} vs {a}"):
                 t1, t2, t3, t4 = st.tabs(["Match Winner & DNB", "Goals & Totals", "Half-Time", "Multi-Goal & Acca"])
@@ -503,12 +509,12 @@ def main():
             st.write("")
 
     elif selected_mode == "Simulator Sandbox":
-        st.markdown("""
+        render_html("""
         <div class="liquid-card">
             <h3 style="margin-top:0; color: #FFFFFF;">On-Demand Club Simulator</h3>
             <p style="color: #8E9BAE; font-size: 13px;">Execute XGBoost time-series matrices on any matchup worldwide.</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         sc1, sc2 = st.columns(2)
         with sc1:
@@ -521,7 +527,7 @@ def main():
                 rep = get_cached_prediction(home_sim, away_sim)
                 calc = CompleteMarketCalculator.calculate(rep["xg"]["home_xg"], rep["xg"]["away_xg"], rep["1x2"])
 
-            st.markdown(f"""
+            render_html(f"""
             <div class="liquid-card" style="margin-top: 1.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <span class="pill-boom">{ICONS['bolt']} Simulation Output</span>
@@ -547,7 +553,7 @@ def main():
                     </div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
 
 if __name__ == "__main__":
