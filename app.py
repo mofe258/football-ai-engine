@@ -7,7 +7,6 @@ LIQUID GLASS AI SPORTS TERMINAL & MULTI-MARKET PREDICTION SUITE
 import os
 import sys
 import time
-import textwrap
 import requests
 import numpy as np
 import pandas as pd
@@ -21,7 +20,7 @@ from football_engine import build_or_load_pipeline
 
 
 # =====================================================================
-# 1. UI SYSTEM CONFIGURATION & HELPER
+# 1. UI SYSTEM CONFIGURATION & BULLETPROOF HTML RENDERER
 # =====================================================================
 
 st.set_page_config(
@@ -32,8 +31,16 @@ st.set_page_config(
 )
 
 def render_html(html_str: str):
-    """Safely strips markdown indentation so HTML never turns into a code block."""
-    st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
+    """
+    Strips all leading indentation and blank lines so Streamlit's Markdown
+    parser can NEVER misinterpret HTML as a code block.
+    Uses st.html() when available (Streamlit 1.35+).
+    """
+    sanitized = " ".join(line.strip() for line in html_str.splitlines() if line.strip())
+    if hasattr(st, "html"):
+        st.html(sanitized)
+    else:
+        st.markdown(sanitized, unsafe_allow_html=True)
 
 
 # Fluid Liquid Tokens, Typography, and Glassmorphic Components
@@ -435,51 +442,9 @@ def main():
                 calc["btts"]["GG (Yes)"] if "Both" in boom_pick else rep["1x2"]["Home Win"]
             )
 
-            render_html(f"""
-            <div class="liquid-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 8px; color: #8E9BAE; font-size: 12px; font-weight: 600; text-transform: uppercase;">
-                        {ICONS['trophy']} {comp}
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; color: #505B6E; font-size: 12px; font-weight: 500;">
-                        {ICONS['clock']} {kickoff}
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px;">
-                    <h2 style="font-size: clamp(1.4rem, 2.5vw, 2.1rem); font-weight: 800; letter-spacing: -0.03em; margin: 0; color: #FFFFFF;">
-                        {h} <span style="background: linear-gradient(135deg, #FF007A 0%, #FF4D4D 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 300;">vs</span> {a}
-                    </h2>
-                    <div style="display: flex; gap: 8px;">
-                        <span class="pill-safe">{ICONS['shield']} {safe_pick}</span>
-                        <span class="pill-boom">{ICONS['fire']} {boom_pick}</span>
-                    </div>
-                </div>
-
-                <div class="metrics-bar">
-                    <div class="metric-cell">
-                        <div class="cell-label">{ICONS['shield']} Banker Floor</div>
-                        <div class="cell-value" style="color: #00F0FF;">{safe_prob:.1f}%</div>
-                        <div class="cell-sub">{safe_pick}</div>
-                    </div>
-                    <div class="metric-cell">
-                        <div class="cell-label">{ICONS['fire']} Boom Opportunity</div>
-                        <div class="cell-value" style="color: #FF007A;">{boom_prob:.1f}%</div>
-                        <div class="cell-sub">{boom_pick}</div>
-                    </div>
-                    <div class="metric-cell">
-                        <div class="cell-label">{ICONS['crosshair']} Sniper Score</div>
-                        <div class="cell-value">{calc['top_score'][0]}</div>
-                        <div class="cell-sub">{calc['top_score'][1]}% probability</div>
-                    </div>
-                    <div class="metric-cell">
-                        <div class="cell-label">{ICONS['bolt']} Model Confidence</div>
-                        <div class="cell-value">{rep['confidence']}<span style="font-size: 0.8rem; color: #717E92;">/10</span></div>
-                        <div class="cell-sub">Entropy calibrated</div>
-                    </div>
-                </div>
-            </div>
-            """)
+            # Compact HTML with NO interior blank lines or indentations
+            card_html = f"""<div class="liquid-card"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><div style="display: flex; align-items: center; gap: 8px; color: #8E9BAE; font-size: 12px; font-weight: 600; text-transform: uppercase;">{ICONS['trophy']} {comp}</div><div style="display: flex; align-items: center; gap: 6px; color: #505B6E; font-size: 12px; font-weight: 500;">{ICONS['clock']} {kickoff}</div></div><div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px;"><h2 style="font-size: clamp(1.4rem, 2.5vw, 2.1rem); font-weight: 800; letter-spacing: -0.03em; margin: 0; color: #FFFFFF;">{h} <span style="background: linear-gradient(135deg, #FF007A 0%, #FF4D4D 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 300;">vs</span> {a}</h2><div style="display: flex; gap: 8px;"><span class="pill-safe">{ICONS['shield']} {safe_pick}</span><span class="pill-boom">{ICONS['fire']} {boom_pick}</span></div></div><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">{ICONS['shield']} Banker Floor</div><div class="cell-value" style="color: #00F0FF;">{safe_prob:.1f}%</div><div class="cell-sub">{safe_pick}</div></div><div class="metric-cell"><div class="cell-label">{ICONS['fire']} Boom Opportunity</div><div class="cell-value" style="color: #FF007A;">{boom_prob:.1f}%</div><div class="cell-sub">{boom_pick}</div></div><div class="metric-cell"><div class="cell-label">{ICONS['crosshair']} Sniper Score</div><div class="cell-value">{calc['top_score'][0]}</div><div class="cell-sub">{calc['top_score'][1]}% probability</div></div><div class="metric-cell"><div class="cell-label">{ICONS['bolt']} Model Confidence</div><div class="cell-value">{rep['confidence']}<span style="font-size: 0.8rem; color: #717E92;">/10</span></div><div class="cell-sub">Entropy calibrated</div></div></div></div>"""
+            render_html(card_html)
 
             with st.expander(f"Inspect Complete Market Catalog for {h} vs {a}"):
                 t1, t2, t3, t4 = st.tabs(["Match Winner & DNB", "Goals & Totals", "Half-Time", "Multi-Goal & Acca"])
@@ -527,33 +492,8 @@ def main():
                 rep = get_cached_prediction(home_sim, away_sim)
                 calc = CompleteMarketCalculator.calculate(rep["xg"]["home_xg"], rep["xg"]["away_xg"], rep["1x2"])
 
-            render_html(f"""
-            <div class="liquid-card" style="margin-top: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <span class="pill-boom">{ICONS['bolt']} Simulation Output</span>
-                    <span style="font-size: 12px; color: #8E9BAE;">Confidence: {rep['confidence']}/10</span>
-                </div>
-                <h2 style="margin: 0 0 1rem 0; color: #FFFFFF;">{home_sim} vs {away_sim}</h2>
-                <div class="metrics-bar">
-                    <div class="metric-cell">
-                        <div class="cell-label">Primary Selection</div>
-                        <div class="cell-value" style="color: #00F0FF;">{rep['1x2']['Selection']}</div>
-                    </div>
-                    <div class="metric-cell">
-                        <div class="cell-label">Over 2.5 Goals</div>
-                        <div class="cell-value">{calc['totals']['Over 2.5']}%</div>
-                    </div>
-                    <div class="metric-cell">
-                        <div class="cell-label">Both Teams to Score</div>
-                        <div class="cell-value">{calc['btts']['GG (Yes)']}%</div>
-                    </div>
-                    <div class="metric-cell">
-                        <div class="cell-label">Exact Score</div>
-                        <div class="cell-value" style="color: #FF007A;">{calc['top_score'][0]}</div>
-                    </div>
-                </div>
-            </div>
-            """)
+            sim_html = f"""<div class="liquid-card" style="margin-top: 1.5rem;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><span class="pill-boom">{ICONS['bolt']} Simulation Output</span><span style="font-size: 12px; color: #8E9BAE;">Confidence: {rep['confidence']}/10</span></div><h2 style="margin: 0 0 1rem 0; color: #FFFFFF;">{home_sim} vs {away_sim}</h2><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Primary Selection</div><div class="cell-value" style="color: #00F0FF;">{rep['1x2']['Selection']}</div></div><div class="metric-cell"><div class="cell-label">Over 2.5 Goals</div><div class="cell-value">{calc['totals']['Over 2.5']}%</div></div><div class="metric-cell"><div class="cell-label">Both Teams to Score</div><div class="cell-value">{calc['btts']['GG (Yes)']}%</div></div><div class="metric-cell"><div class="cell-label">Exact Score</div><div class="cell-value" style="color: #FF007A;">{calc['top_score'][0]}</div></div></div></div>"""
+            render_html(sim_html)
 
 
 if __name__ == "__main__":
