@@ -1,6 +1,6 @@
 """
 ================================================================================
-MODULAR DATA PROVIDER ADAPTERS & ENTITY RESOLUTION ARCHITECTURE
+ADAPTERS PLUS — REAL-TIME MULTI-SOURCE FIXTURE INGESTION & DATA PROVIDERS
 ================================================================================
 """
 
@@ -21,7 +21,6 @@ class BaseDataProvider:
         raise NotImplementedError
 
 class APIFootballAdapter(BaseDataProvider):
-    """Adapter for API-Football (v3)."""
     BASE_URL = "https://v3.football.api-sports.io"
 
     def check_health(self) -> Dict[str, Any]:
@@ -52,7 +51,6 @@ class APIFootballAdapter(BaseDataProvider):
             return {"provider": "API-Football", "status": "ERROR", "message": str(e)}
 
 class TheOddsAPIAdapter(BaseDataProvider):
-    """Adapter for The Odds API (v4)."""
     BASE_URL = "https://api.the-odds-api.com/v4"
 
     def check_health(self) -> Dict[str, Any]:
@@ -143,7 +141,7 @@ class CanonicalFixtureService:
         headers = {"User-Agent": "Mozilla/5.0"}
         found = []
         try:
-            res = requests.get(url, headers=headers, timeout=3.0)
+            res = requests.get(url, headers=headers, timeout=2.5)
             if res.status_code == 200:
                 for ev in res.json().get("events", []):
                     status_state = ev.get("status", {}).get("type", {}).get("state", "")
