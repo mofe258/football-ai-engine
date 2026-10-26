@@ -1,6 +1,6 @@
 """
 ================================================================================
-PERSONAL BET — COMPREHENSIVE MULTI-MARKET SPORTS INTELLIGENCE PLATFORM
+PERSONAL BET — COMPLETE MULTI-MARKET SPORTS INTELLIGENCE PLATFORM
 ================================================================================
 """
 
@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any
 
 # =====================================================================
-# IMPORT BRIDGE (Supports adaptersplus.py and adapters.py seamlessly)
+# IMPORT BRIDGE (Loads adaptersplus or adapters seamlessly)
 # =====================================================================
 for mod_name in ['database', 'adaptersplus', 'adapters', 'prediction', 'backtesting']:
     try:
@@ -60,7 +60,6 @@ st.set_page_config(
 )
 
 def render_html(html_str: str):
-    """Safely injects unindented HTML to bypass Markdown code-block parsing."""
     sanitized = " ".join(line.strip() for line in html_str.splitlines() if line.strip())
     if hasattr(st, "html"):
         st.html(sanitized)
@@ -95,7 +94,7 @@ render_html("""
         max-width: 1260px !important;
     }
 
-    /* REDESIGNED APPLE VISIONOS DOCK: NO TEXT WRAPPING, NO RADIO CIRCLES */
+    /* APPLE VISIONOS DOCK: STRICT NO CLUMPING, NO RADIO CIRCLES */
     div[data-testid="stRadio"] > div[role="radiogroup"] {
         display: flex !important;
         flex-direction: row !important;
@@ -109,14 +108,14 @@ render_html("""
         -webkit-backdrop-filter: blur(35px) saturate(200%) !important;
         border: 1px solid rgba(255, 255, 255, 0.18) !important;
         border-radius: 9999px !important;
-        padding: 6px 10px !important;
+        padding: 6px 12px !important;
         box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.9), inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.4) !important;
         margin-bottom: 1.25rem !important;
         align-items: center !important;
     }
     div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar { display: none !important; }
 
-    /* ABSOLUTELY HIDE ALL RADIO BUTTON CIRCLES */
+    /* HIDE STREAMLIT RADIO CIRCLES */
     div[data-testid="stRadio"] label > *:not([data-testid="stMarkdownContainer"]),
     div[data-testid="stRadio"] label input,
     div[data-testid="stRadio"] label svg,
@@ -130,7 +129,7 @@ render_html("""
         pointer-events: none !important;
     }
 
-    /* PREVENT TEXT FROM EVER CLUMPING OR WRAPPING */
+    /* PREVENT TEXT WRAPPING */
     div[data-testid="stRadio"] div[role="radiogroup"] label {
         flex: 0 0 auto !important;
         white-space: nowrap !important;
@@ -287,11 +286,6 @@ render_html("""
 def load_ml_engine():
     return build_or_load_pipeline(force_retrain=False)
 
-
-# =====================================================================
-# DYNAMIC MULTI-MARKET SELECTION INTELLIGENCE (ALL MARKETS EVALUATED)
-# =====================================================================
-
 class MultiMarketIntelligence:
     @staticmethod
     def rank_all_markets(h: str, a: str, res: Dict[str, Any]) -> Dict[str, Any]:
@@ -299,7 +293,6 @@ class MultiMarketIntelligence:
 
         # 1. 1X2 Outright
         p_h = float(res["p_1x2"]["1"])
-        p_x = float(res["p_1x2"]["X"])
         p_a = float(res["p_1x2"]["2"])
         if p_h >= 52.0:
             candidates.append({"market": "1X2 Result", "pick": f"{h} to Win", "prob": p_h, "type": "OUTRIGHT", "odd": res["odds_1x2"]["1"]})
@@ -341,14 +334,9 @@ class MultiMarketIntelligence:
         p_ht_o05 = float(res["p_ht"]["1H_O05"])
         candidates.append({"market": "1st Half Goals", "pick": "1H Over 0.5 Goals", "prob": p_ht_o05, "type": "SAFETY", "odd": round(1.055 / (p_ht_o05 / 100.0), 2)})
 
-        # Sort for Banker (Highest statistical floor)
         safe_banker = max(candidates, key=lambda x: x["prob"])
-
-        # Sort for Boom Pick
         boom_candidates = [c for c in candidates if c["type"] in ["BOOM", "OUTRIGHT"] and c["prob"] >= 54.0]
         boom_pick = max(boom_candidates, key=lambda x: x["prob"]) if boom_candidates else safe_banker
-
-        # Best Pick
         best_market = boom_pick if boom_pick["prob"] >= 59.0 else safe_banker
 
         return {
@@ -358,11 +346,9 @@ class MultiMarketIntelligence:
             "all_candidates": candidates
         }
 
-
 def main():
     engine = load_ml_engine()
 
-    # Brand Header
     render_html("""
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 12px;">
@@ -379,7 +365,6 @@ def main():
     </div>
     """)
 
-    # Non-wrapping dock tabs
     nav_tabs = [
         "⚡ Fixtures", "🔍 Analysis", "📊 Markets", "🤖 AI Predict",
         "🎯 Tipsters", "🛡️ Safe Slip", "📈 Kelly / EV", "⚖️ Odds Vig",
@@ -422,13 +407,11 @@ def main():
                 res = MarketPricingEngine.evaluate_markets(engine, h, a, is_conf)
                 sig_name, sig_cls, sig_desc = res["decision"]
 
-                # Dynamic multi-market selection
                 market_eval = MultiMarketIntelligence.rank_all_markets(h, a, res)
                 safe_b = market_eval["safe_banker"]
                 boom_b = market_eval["boom_pick"]
                 best_m = market_eval["best_market"]
 
-                # All betting market values
                 p1 = f"{res['p_1x2']['1']:.1f}%"
                 px = f"{res['p_1x2']['X']:.1f}%"
                 p2 = f"{res['p_1x2']['2']:.1f}%"
@@ -452,7 +435,6 @@ def main():
                         <span style="font-size: 12px; color: {'#38ef7d' if is_conf else '#FFB800'}; font-weight: 700;">{l_status}</span>
                     </div>
 
-                    <!-- AI Primary Highlights -->
                     <div class="triple-score-grid">
                         <div class="score-cell">
                             <div class="score-title">🎯 Best AI Market Pick</div>
@@ -471,7 +453,6 @@ def main():
                         </div>
                     </div>
 
-                    <!-- Complete On-Card Betting Markets -->
                     <div class="market-strip">
                         <div class="market-box"><div class="market-label">1X2 (1)</div><div class="market-val" style="color:#00F0FF;">{p1}</div></div>
                         <div class="market-box"><div class="market-label">1X2 (X)</div><div class="market-val">{px}</div></div>
@@ -605,13 +586,13 @@ def main():
         ])
         st.dataframe(df_ranks, use_container_width=True)
 
-    # 6. DIVERSIFIED SAFE ACCUMULATOR (NOT JUST 1X!)
+    # 6. DIVERSIFIED SAFE ACCUMULATOR (MULTI-MARKET)
     elif current_module == "🛡️ Safe Slip":
         render_html("""
         <div style="padding: 0.8rem 0 0.4rem 0;">
             <div style="display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; margin-bottom: 0.5rem;">Multi-Market Survival Optimizer</div>
             <h1 style="font-size: clamp(1.8rem, 3.5vw + 1rem, 2.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.4rem 0; color: #FFFFFF;">Safe Accumulator Slip.</h1>
-            <p style="color: #94A3B8; font-size: 13.5px; margin: 0;">Diversified selections across Over 1.5, BTTS, Double Chance, and 1H Goals to maximize ticket survival.</p>
+            <p style="color: #94A3B8; font-size: 13.5px; margin: 0;">Diversified selections across Over 1.5, BTTS, Double Chance, and 1H Goals from live fixtures.</p>
         </div>
         """)
         sched = CanonicalFixtureService.get_canonical_schedule().get("Today", [])
@@ -623,7 +604,7 @@ def main():
         if not sched:
             render_html("""
             <div class="glass-card" style="text-align: center; padding: 2.5rem 1.5rem;">
-                <h3 style="color: #94A3B8; margin-bottom: 6px;">No Verified Fixtures Available</h3>
+                <h3 style="color: #94A3B8; margin-bottom: 6px;">No Verified Fixtures Available Right Now</h3>
                 <p style="color: #64748B; font-size: 13px; margin: 0;">Awaiting live schedule refresh from global providers to generate a verified safe slip.</p>
             </div>
             """)
