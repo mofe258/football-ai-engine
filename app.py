@@ -1,21 +1,13 @@
-# Let's write the complete app.py script into the filesystem and test compile it
-app_full_content = '''"""
+"""
 ================================================================================
 PERSONAL BET — INSTITUTIONAL SPORTS PREDICTION & BETTING INTELLIGENCE PLATFORM
-================================================================================
-Modules:
-  1. Fixture Centre              7. EV & Kelly Staking
-  2. Match Deep Analysis         8. Odds & De-Vig
-  3. All Markets Explorer        9. SportyBet Code Audit
-  4. AI Predict (Independent)   10. Backtest & Calibration Ledger
-  5. Tipster Consensus          11. API & Provider Health Dashboard
-  6. Safe Accumulator
 ================================================================================
 """
 
 import os
 import sys
 import time
+import types
 import requests
 import numpy as np
 import pandas as pd
@@ -23,13 +15,32 @@ import streamlit as st
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
 
-from football_engine import build_or_load_pipeline
-from core.database import init_db, get_connection
-from core.adapters import CanonicalFixtureService, APIFootballAdapter, TheOddsAPIAdapter, TelegramTipsterAdapter
-from core.prediction import DixonColesEngine, MarketPricingEngine
-from core.backtesting import BacktestService
+# =====================================================================
+# COMPATIBILITY IMPORT BRIDGE (Handles root vs core/ file locations)
+# =====================================================================
+for mod_name in ['database', 'adapters', 'prediction', 'backtesting']:
+    try:
+        mod = __import__(mod_name)
+        if 'core' not in sys.modules:
+            sys.modules['core'] = types.ModuleType('core')
+        sys.modules[f'core.{mod_name}'] = mod
+    except ImportError:
+        pass
 
-# Ensure Database Schema is Active
+try:
+    from database import init_db, get_connection
+    from adapters import CanonicalFixtureService, APIFootballAdapter, TheOddsAPIAdapter, TelegramTipsterAdapter
+    from prediction import DixonColesEngine, MarketPricingEngine
+    from backtesting import BacktestService
+except ImportError:
+    from core.database import init_db, get_connection
+    from core.adapters import CanonicalFixtureService, APIFootballAdapter, TheOddsAPIAdapter, TelegramTipsterAdapter
+    from core.prediction import DixonColesEngine, MarketPricingEngine
+    from core.backtesting import BacktestService
+
+from football_engine import build_or_load_pipeline
+
+# Initialize database schema
 init_db()
 
 st.set_page_config(
@@ -560,10 +571,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-'''
-
-with open("app.py", "w") as f:
-    f.write(app_full_content)
-
-compile(app_full_content, "app.py", "exec")
-print("Verified! Full app.py compiled with zero syntax errors.")
