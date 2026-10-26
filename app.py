@@ -1,12 +1,8 @@
 """
 ================================================================================
-BETRELAY AI SPORTS ENGINE & COMPLETE MULTI-MODULE ANALYTICS TERMINAL
+PERSONAL BET — AI AUTONOMOUS SPORTSBOOK INTELLIGENCE TERMINAL
 ================================================================================
-Modules:
-  1. Converter        5. Optimizer (Kelly & EV)
-  2. Predictions      6. Odds & Margin Engine
-  3. AI Predict       7. Code Checker (Slip Auditor)
-  4. Safe Bets        8. H2H Compare Engine
+Futuristic Liquid Glass Dock & Multi-Module Analytics Engine
 ================================================================================
 """
 
@@ -31,7 +27,7 @@ from football_engine import build_or_load_pipeline
 # =====================================================================
 
 st.set_page_config(
-    page_title="BetRelay AI Sports Terminal",
+    page_title="Personal Bet — AI Sports Terminal",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -48,15 +44,15 @@ def render_html(html_str: str):
 
 render_html("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         background-color: #06070a !important;
         background-image: 
-            radial-gradient(circle at 8% 18%, rgba(255, 0, 122, 0.22) 0%, transparent 45%),
-            radial-gradient(circle at 92% 28%, rgba(121, 40, 202, 0.28) 0%, transparent 50%),
-            radial-gradient(circle at 50% 85%, rgba(255, 77, 77, 0.18) 0%, transparent 55%) !important;
+            radial-gradient(circle at 10% 12%, rgba(255, 0, 122, 0.25) 0%, transparent 45%),
+            radial-gradient(circle at 90% 20%, rgba(121, 40, 202, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 50% 85%, rgba(0, 240, 255, 0.15) 0%, transparent 55%) !important;
         background-attachment: fixed !important;
         color: #F8FAFC !important;
         letter-spacing: -0.015em;
@@ -65,40 +61,88 @@ render_html("""
     [data-testid="stHeader"] { background: transparent !important; }
 
     .block-container {
-        padding-top: clamp(1.5rem, 3vw, 3rem) !important;
+        padding-top: clamp(1rem, 2.5vw, 2rem) !important;
         padding-bottom: clamp(2rem, 5vw, 5rem) !important;
-        max-width: 1200px !important;
+        max-width: 1240px !important;
     }
 
-    .hero-container {
-        padding: clamp(1rem, 2.5vw, 2.5rem) 0 clamp(0.5rem, 1.5vw, 1.5rem) 0;
+    /* ========================================================= */
+    /* FUTURISTIC LIQUID GLASS DOCK (BETRELAY -> PERSONAL BET)   */
+    /* ========================================================= */
+    
+    /* 1. Container Dock */
+    div[data-testid="stRadio"] > div[role="radiogroup"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+        gap: 6px !important;
+        background: rgba(14, 16, 26, 0.65) !important;
+        backdrop-filter: blur(30px) !important;
+        -webkit-backdrop-filter: blur(30px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 18px !important;
+        padding: 6px !important;
+        box-shadow: 
+            0 20px 40px -15px rgba(0, 0, 0, 0.7),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+            0 0 25px -5px rgba(255, 0, 122, 0.15) !important;
+        margin-bottom: 1.5rem !important;
     }
-    .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 5px 12px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 9999px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: #00F0FF;
-        margin-bottom: 0.8rem;
-    }
-    .hero-title {
-        font-size: clamp(2rem, 4.5vw + 1rem, 3.8rem) !important;
-        font-weight: 800 !important;
-        letter-spacing: -0.04em !important;
-        line-height: 1.05 !important;
-        margin: 0 0 0.8rem 0 !important;
-        background: linear-gradient(180deg, #FFFFFF 0%, #A5B4FC 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar {
+        display: none !important;
     }
 
+    /* 2. Completely Hide the Ugly Radio Circles */
+    div[data-testid="stRadio"] div[role="radiogroup"] label > div:first-child {
+        display: none !important;
+    }
+
+    /* 3. Each Interactive Dock Tab */
+    div[data-testid="stRadio"] div[role="radiogroup"] label {
+        flex: 0 0 auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 9px 18px !important;
+        border-radius: 12px !important;
+        margin: 0 !important;
+        cursor: pointer !important;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+        color: #8E9BAE !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.01em !important;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        user-select: none !important;
+    }
+
+    /* 4. Hover Micro-Interaction */
+    div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
+        color: #FFFFFF !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* 5. Active Selected Tab Animation (Liquid Gradient Capsule) */
+    div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
+        background: linear-gradient(135deg, rgba(255, 0, 122, 0.3) 0%, rgba(121, 40, 202, 0.4) 50%, rgba(0, 240, 255, 0.25) 100%) !important;
+        border: 1px solid rgba(255, 0, 122, 0.6) !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        box-shadow: 
+            0 0 24px rgba(255, 0, 122, 0.4),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.35) !important;
+        transform: translateY(-1px) scale(1.02) !important;
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.7) !important;
+    }
+
+    /* Editorial Glass Cards */
     .liquid-card {
         background: rgba(18, 18, 28, 0.65);
         backdrop-filter: blur(20px);
@@ -153,6 +197,7 @@ render_html("""
         display: inline-flex;
         align-items: center;
         gap: 5px;
+        box-shadow: 0 4px 12px rgba(255, 0, 122, 0.3);
     }
     .pill-safe {
         background: linear-gradient(135deg, #00F0FF 0%, #0066FF 100%);
@@ -164,18 +209,7 @@ render_html("""
         display: inline-flex;
         align-items: center;
         gap: 5px;
-    }
-
-    div[role="radiogroup"] {
-        background: rgba(18, 18, 28, 0.6) !important;
-        padding: 4px !important;
-        border-radius: 9999px !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-    div[role="radiogroup"] label {
-        padding: 5px 14px !important;
-        border-radius: 9999px !important;
-        font-size: 13px !important;
+        box-shadow: 0 4px 12px rgba(0, 240, 255, 0.25);
     }
 </style>
 """)
@@ -327,30 +361,36 @@ class CompleteMarketCalculator:
 
 
 # =====================================================================
-# 3. MAIN BETRELAY NAVIGATION ROUTER
+# 3. MAIN APPLICATION & FUTURISTIC PERSONAL BET ROUTER
 # =====================================================================
 
 def main():
     engine = get_prediction_engine()
 
-    # Top Brand Header
+    # Rebranded "Personal Bet" Futuristic Top Header
     render_html("""
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-bottom: 12px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="background: linear-gradient(135deg, #FF007A, #00F0FF); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 14px;">⚡</div>
-            <span style="font-size: 20px; font-weight: 800; letter-spacing: -0.03em;"><span style="color: #00F0FF;">Bet</span><span style="color: #FFB800;">Relay</span></span>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px; margin-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="background: linear-gradient(135deg, #FF007A, #00F0FF); width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 16px; box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);">⚡</div>
+            <span style="font-size: 24px; font-weight: 900; letter-spacing: -0.04em;">
+                <span style="background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Personal</span>
+                <span style="background: linear-gradient(135deg, #FF007A 0%, #00F0FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bet</span>
+            </span>
         </div>
-        <div style="color: #8E9BAE; font-size: 12px; font-weight: 500;">AI Autonomous Sportsbook Intelligence</div>
+        <div style="color: #717E92; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 6px;">
+            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #00F0FF; box-shadow: 0 0 10px #00F0FF;"></span>
+            AI Autonomous Sportsbook Intelligence
+        </div>
     </div>
     """)
 
-    # BetRelay Full Module Navigation
+    # Streamlined, Single-Line Liquid Glass Dock
     nav_tabs = [
         "Predictions", "AI Predict", "Safe Bets", "Converter",
-        "Optimizer", "Odds", "Code Checker [NEW]", "Compare [NEW]"
+        "Optimizer", "Odds", "Code Checker", "Compare"
     ]
     current_module = st.radio("Navigation:", nav_tabs, horizontal=True, label_visibility="collapsed")
-    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
 
     # -------------------------------------------------------------
@@ -529,12 +569,11 @@ def main():
         with c3:
             model_prob = st.slider("AI Calculated Win Probability (%):", min_value=1, max_value=99, value=62)
 
-        # Kelly Calculation: f* = (b*p - q) / b
         b = market_odds - 1.0
         p = model_prob / 100.0
         q = 1.0 - p
         kelly_fraction = max(0.0, (b * p - q) / (b + 1e-9))
-        safe_half_kelly = kelly_fraction * 0.5  # Half-Kelly for risk reduction
+        safe_half_kelly = kelly_fraction * 0.5
         recommended_stake = safe_half_kelly * total_bankroll
         ev = (p * (market_odds - 1.0)) - q
 
@@ -571,9 +610,9 @@ def main():
 
 
     # -------------------------------------------------------------
-    # MODULE 7: CODE CHECKER [NEW] (SLIP AUDITOR)
+    # MODULE 7: CODE CHECKER (SLIP AUDITOR)
     # -------------------------------------------------------------
-    elif current_module == "Code Checker [NEW]":
+    elif current_module == "Code Checker":
         render_html("""
         <div class="hero-container">
             <div class="hero-badge">Ticket Audit & Risk Screening</div>
@@ -589,9 +628,9 @@ def main():
 
 
     # -------------------------------------------------------------
-    # MODULE 8: COMPARE [NEW] (H2H TACTICAL RADAR)
+    # MODULE 8: COMPARE (H2H TACTICAL RADAR)
     # -------------------------------------------------------------
-    elif current_module == "Compare [NEW]":
+    elif current_module == "Compare":
         render_html("""
         <div class="hero-container">
             <div class="hero-badge">Tactical Analytics</div>
