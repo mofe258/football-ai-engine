@@ -40,7 +40,7 @@ except ImportError:
 
 from football_engine import build_or_load_pipeline
 
-# Ensure DB initialized
+# Initialize database schema
 init_db()
 
 st.set_page_config(
@@ -51,6 +51,7 @@ st.set_page_config(
 )
 
 def render_html(html_str: str):
+    """Safely injects unindented HTML to bypass Markdown code-block parsing."""
     sanitized = " ".join(line.strip() for line in html_str.splitlines() if line.strip())
     if hasattr(st, "html"):
         st.html(sanitized)
@@ -85,9 +86,7 @@ render_html("""
         max-width: 1260px !important;
     }
 
-    /* ========================================================= */
-    /* REDESIGNED APPLE VISIONOS LIQUID DOCK (ZERO TEXT WRAPPING)*/
-    /* ========================================================= */
+    /* REDESIGNED APPLE VISIONOS LIQUID DOCK (ZERO TEXT WRAPPING) */
     div[data-testid="stRadio"] > div[role="radiogroup"] {
         display: flex !important;
         flex-direction: row !important;
@@ -108,7 +107,7 @@ render_html("""
     }
     div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar { display: none !important; }
 
-    /* HIDE ALL RADIO BUTTON CIRCLES AND INPUTS COMPLETELY */
+    /* HIDE ALL RADIO BUTTON CIRCLES COMPLETELY */
     div[data-testid="stRadio"] [data-baseweb="radio"] > div:first-child,
     div[data-testid="stRadio"] input[type="radio"],
     div[data-testid="stRadio"] svg {
@@ -263,7 +262,7 @@ def main():
     </div>
     """)
 
-    # Concise, elegant dock labels (Zero clumping, zero text wrapping)
+    # Clean, non-wrapping dock labels
     nav_tabs = [
         "⚡ Fixtures", "🔍 Analysis", "📊 Markets", "🤖 AI Predict",
         "🎯 Tipsters", "🛡️ Safe Slip", "📈 Kelly / EV", "⚖️ Odds Vig",
@@ -284,7 +283,7 @@ def main():
         schedule = CanonicalFixtureService.get_canonical_schedule()
         c_day, c_status = st.columns([2, 2])
         with c_day:
-            day_pick = st.radio("Date Schedule:", ["Today", "Tomorrow"], horizontal=True)
+            day_pick = st.radio("Date Schedule:", ["Today", "Tomorrow", "Upcoming"], horizontal=True)
         with c_status:
             status_filter = st.selectbox("Status Filter:", ["All Fixtures", "Confirmed Lineups Only", "Scheduled"])
 
@@ -293,10 +292,10 @@ def main():
             fixtures = [f for f in fixtures if "Confirmed" in f["lineup_status"]]
 
         if not fixtures:
-            render_html("""
+            render_html(f"""
             <div class="glass-card" style="text-align: center; padding: 3rem 1.5rem;">
-                <h3 style="color: #94A3B8; margin-bottom: 6px;">No Live Matches Currently Scheduled</h3>
-                <p style="color: #64748B; font-size: 13px; margin: 0;">No active fixtures found in the monitored leagues for this date. Check tomorrow or use the AI Predict simulator.</p>
+                <h3 style="color: #94A3B8; margin-bottom: 6px;">No Matches Scheduled for {day_pick}</h3>
+                <p style="color: #64748B; font-size: 13px; margin: 0;">No active fixtures found in the monitored leagues for this specific date. Switch to Tomorrow or Upcoming to view upcoming games.</p>
             </div>
             """)
         else:
@@ -466,12 +465,20 @@ def main():
             <h1 style="font-size: clamp(1.8rem, 3.5vw + 1rem, 2.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.4rem 0; color: #FFFFFF;">Safe Accumulator Slip.</h1>
         </div>
         """)
+        # Pull strictly from real matches (Today -> Tomorrow -> Upcoming)
         sched = CanonicalFixtureService.get_canonical_schedule().get("Today", [])
         if not sched:
             sched = CanonicalFixtureService.get_canonical_schedule().get("Tomorrow", [])
+        if not sched:
+            sched = CanonicalFixtureService.get_canonical_schedule().get("Upcoming", [])
 
         if not sched:
-            st.info("No active fixtures found to build a slip.")
+            render_html("""
+            <div class="glass-card" style="text-align: center; padding: 2.5rem 1.5rem;">
+                <h3 style="color: #94A3B8; margin-bottom: 6px;">No Verified Fixtures Available</h3>
+                <p style="color: #64748B; font-size: 13px; margin: 0;">Awaiting live schedule refresh from global providers to generate a verified safe slip.</p>
+            </div>
+            """)
         else:
             legs = min(len(sched), 3)
             total_odd, total_prob = 1.0, 1.0
