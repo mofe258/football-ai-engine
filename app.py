@@ -1,8 +1,8 @@
 """
 ================================================================================
-PERSONAL BET — AI AUTONOMOUS SPORTSBOOK INTELLIGENCE TERMINAL
+PERSONAL BET — APPLE VISIONOS LIQUID GLASS SPORTS TERMINAL
 ================================================================================
-With Live SportyBet Code Auditor, Trap Detector & Slip Optimizer
+Design: Ultra-Glossy Specular Glassmorphism, Chrome Rim Lighting, Apple Motion
 ================================================================================
 """
 
@@ -27,7 +27,7 @@ from football_engine import build_or_load_pipeline
 # =====================================================================
 
 st.set_page_config(
-    page_title="Personal Bet — AI Sports Terminal",
+    page_title="Personal Bet — Sports Intelligence",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -44,18 +44,21 @@ def render_html(html_str: str):
 
 render_html("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
 
+    /* Global Obsidian Glass Viewport with Ambient Liquid Refraction */
     html, body, [data-testid="stAppViewContainer"] {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        background-color: #06070a !important;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Plus Jakarta Sans", sans-serif !important;
+        background-color: #030305 !important;
         background-image: 
-            radial-gradient(circle at 10% 12%, rgba(255, 0, 122, 0.25) 0%, transparent 45%),
-            radial-gradient(circle at 90% 20%, rgba(121, 40, 202, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 50% 85%, rgba(0, 240, 255, 0.15) 0%, transparent 55%) !important;
+            radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 85% 25%, rgba(0, 240, 255, 0.12) 0%, transparent 50%),
+            radial-gradient(circle at 50% 85%, rgba(255, 45, 85, 0.1) 0%, transparent 55%),
+            radial-gradient(circle at 30% 60%, rgba(121, 40, 202, 0.12) 0%, transparent 45%) !important;
         background-attachment: fixed !important;
         color: #F8FAFC !important;
-        letter-spacing: -0.015em;
+        letter-spacing: -0.02em;
+        -webkit-font-smoothing: antialiased;
     }
 
     [data-testid="stHeader"] { background: transparent !important; }
@@ -66,139 +69,189 @@ render_html("""
         max-width: 1240px !important;
     }
 
-    /* FUTURISTIC LIQUID GLASS DOCK */
+    /* ========================================================= */
+    /* APPLE SPECULAR GLASS DOCK (TOP BAR)                       */
+    /* ========================================================= */
     div[data-testid="stRadio"] > div[role="radiogroup"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
         scrollbar-width: none !important;
-        -ms-overflow-style: none !important;
         gap: 6px !important;
-        background: rgba(14, 16, 26, 0.65) !important;
-        backdrop-filter: blur(30px) !important;
-        -webkit-backdrop-filter: blur(30px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 18px !important;
-        padding: 6px !important;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(10, 10, 18, 0.7) 100%) !important;
+        backdrop-filter: blur(40px) saturate(200%) !important;
+        -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        border-radius: 9999px !important;
+        padding: 7px !important;
         box-shadow: 
-            0 20px 40px -15px rgba(0, 0, 0, 0.7),
-            inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
-            0 0 25px -5px rgba(255, 0, 122, 0.15) !important;
+            0 25px 50px -15px rgba(0, 0, 0, 0.9),
+            inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.5),
+            inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.4) !important;
         margin-bottom: 1.5rem !important;
     }
     div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar { display: none !important; }
 
+    /* Hide default radio glyphs */
     div[data-testid="stRadio"] div[role="radiogroup"] label > div:first-child { display: none !important; }
 
+    /* Glass Dock Items */
     div[data-testid="stRadio"] div[role="radiogroup"] label {
         flex: 0 0 auto !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 9px 18px !important;
-        border-radius: 12px !important;
+        padding: 9px 20px !important;
+        border-radius: 9999px !important;
         margin: 0 !important;
         cursor: pointer !important;
         background: transparent !important;
         border: 1px solid transparent !important;
-        color: #8E9BAE !important;
+        color: #94A3B8 !important;
         font-size: 13px !important;
         font-weight: 600 !important;
-        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        letter-spacing: -0.02em !important;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
 
     div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
         color: #FFFFFF !important;
-        background: rgba(255, 255, 255, 0.05) !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
         transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5) !important;
     }
 
+    /* Active Selected Glass Capsule */
     div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
-        background: linear-gradient(135deg, rgba(255, 0, 122, 0.3) 0%, rgba(121, 40, 202, 0.4) 50%, rgba(0, 240, 255, 0.25) 100%) !important;
-        border: 1px solid rgba(255, 0, 122, 0.6) !important;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(0, 240, 255, 0.18) 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.45) !important;
         color: #FFFFFF !important;
         font-weight: 700 !important;
-        box-shadow: 0 0 24px rgba(255, 0, 122, 0.4) !important;
+        box-shadow: 
+            0 12px 28px -6px rgba(0, 240, 255, 0.35),
+            inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 2px 0 rgba(0, 0, 0, 0.5) !important;
         transform: translateY(-1px) scale(1.02) !important;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8) !important;
     }
 
-    .liquid-card {
-        background: rgba(18, 18, 28, 0.65);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
-        padding: clamp(1.2rem, 2vw, 1.8rem);
-        margin-bottom: 1.25rem;
-        box-shadow: 0 12px 36px -12px rgba(0, 0, 0, 0.5);
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    /* ========================================================= */
+    /* SPECULAR GLASS CARDS (MATCHING THE ATTACHED IMAGE)       */
+    /* ========================================================= */
+    .glass-capsule-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 35%, rgba(8, 9, 14, 0.85) 75%, rgba(255, 255, 255, 0.05) 100%);
+        backdrop-filter: blur(40px) saturate(190%);
+        -webkit-backdrop-filter: blur(40px) saturate(190%);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 32px;
+        padding: clamp(1.4rem, 2.5vw, 2.2rem);
+        margin-bottom: 1.5rem;
+        box-shadow: 
+            0 30px 60px -20px rgba(0, 0, 0, 0.9),
+            inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.75),
+            inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.6);
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
     }
-    .liquid-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(255, 0, 122, 0.35);
+    .glass-capsule-card::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 40%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
+        pointer-events: none;
+        border-top-left-radius: 32px;
+        border-top-right-radius: 32px;
+    }
+    .glass-capsule-card:hover {
+        transform: translateY(-3px) scale(1.005);
+        border-color: rgba(255, 255, 255, 0.35);
+        box-shadow: 
+            0 40px 80px -20px rgba(0, 240, 255, 0.2),
+            inset 0 2px 2px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.6);
     }
 
+    /* Small Glass Stadium Cells */
     .metrics-bar {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 12px;
-        margin: 1.2rem 0;
+        margin: 1.25rem 0;
     }
     .metric-cell {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 14px;
-        padding: 12px 14px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        padding: 14px 18px;
+        box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.3);
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .metric-cell:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.25);
     }
     .cell-label {
         font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #717E92;
-        margin-bottom: 5px;
-        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: #94A3B8;
+        margin-bottom: 6px;
+        font-weight: 700;
     }
     .cell-value {
-        font-size: 1.15rem;
-        font-weight: 700;
+        font-size: 1.25rem;
+        font-weight: 800;
         color: #FFFFFF;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.03em;
     }
 
-    .pill-boom {
-        background: linear-gradient(135deg, #FF007A 0%, #FF4D4D 100%);
-        color: #FFFFFF !important;
-        font-weight: 700;
-        font-size: 12px;
-        padding: 4px 10px;
-        border-radius: 9999px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-    }
+    /* Liquid Glass Badges with Specular Rims */
     .pill-safe {
-        background: linear-gradient(135deg, #00F0FF 0%, #0066FF 100%);
-        color: #06070A !important;
+        background: linear-gradient(135deg, rgba(0, 240, 255, 0.25) 0%, rgba(0, 114, 255, 0.35) 100%);
+        border: 1px solid rgba(0, 240, 255, 0.5);
+        color: #E0F7FF !important;
         font-weight: 700;
         font-size: 12px;
-        padding: 4px 10px;
+        padding: 6px 14px;
         border-radius: 9999px;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
+        box-shadow: 
+            0 8px 18px rgba(0, 240, 255, 0.25),
+            inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    }
+    .pill-boom {
+        background: linear-gradient(135deg, rgba(255, 45, 85, 0.25) 0%, rgba(255, 0, 122, 0.35) 100%);
+        border: 1px solid rgba(255, 45, 85, 0.5);
+        color: #FFE4EC !important;
+        font-weight: 700;
+        font-size: 12px;
+        padding: 6px 14px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 
+            0 8px 18px rgba(255, 45, 85, 0.25),
+            inset 0 1px 1px rgba(255, 255, 255, 0.6);
     }
     .pill-trap {
-        background: rgba(255, 77, 77, 0.2);
-        border: 1px solid rgba(255, 77, 77, 0.4);
-        color: #FF4D4D !important;
+        background: rgba(255, 59, 48, 0.15);
+        border: 1px solid rgba(255, 59, 48, 0.4);
+        color: #FF6961 !important;
         font-weight: 700;
         font-size: 12px;
-        padding: 4px 10px;
+        padding: 6px 14px;
         border-radius: 9999px;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
     }
 </style>
 """)
@@ -355,8 +408,6 @@ class CompleteMarketCalculator:
 # =====================================================================
 
 class SportyBetAuditor:
-    """Queries SportyBet share API or decodes match selections for deep risk auditing."""
-
     @staticmethod
     def resolve_code(code: str, active_fixtures: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         clean_code = code.strip().upper()
@@ -365,7 +416,6 @@ class SportyBetAuditor:
             "Accept": "application/json, text/plain, */*"
         }
 
-        # 1. Try Direct SportyBet Nigeria API
         try:
             url = f"https://www.sportybet.com/api/ng/orders/share/{clean_code}"
             res = requests.get(url, headers=headers, timeout=3.5)
@@ -386,8 +436,6 @@ class SportyBetAuditor:
         except Exception:
             pass
 
-        # 2. Resilient Fallback: If SportyBet blocks cloud IP or code is custom,
-        # dynamically pair the code with today's real fixtures to simulate the slip!
         simulated_slip = []
         sample_pool = active_fixtures if len(active_fixtures) >= 4 else [
             {"home": "Arsenal", "away": "Chelsea"},
@@ -400,7 +448,7 @@ class SportyBetAuditor:
             ("Double Chance", "1X (Home/Draw)", 1.35),
             ("Over/Under", "Over 2.5 Goals", 1.85),
             ("Both Teams To Score", "GG (Yes)", 1.75),
-            ("Over/Under", "Over 3.5 Goals", 2.90)  # Trap candidate
+            ("Over/Under", "Over 3.5 Goals", 2.90)
         ]
 
         for i, m in enumerate(sample_pool[:4]):
@@ -416,30 +464,30 @@ class SportyBetAuditor:
 
 
 # =====================================================================
-# 4. MAIN APPLICATION & FUTURISTIC PERSONAL BET ROUTER
+# 4. MAIN APPLICATION & APPLE GLASS ROUTER
 # =====================================================================
 
 def main():
     engine = get_prediction_engine()
 
-    # Rebranded "Personal Bet" Futuristic Top Header
+    # Apple-grade VisionOS Top Branding
     render_html("""
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px; margin-bottom: 14px;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="background: linear-gradient(135deg, #FF007A, #00F0FF); width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 16px; box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);">⚡</div>
-            <span style="font-size: 24px; font-weight: 900; letter-spacing: -0.04em;">
-                <span style="background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Personal</span>
-                <span style="background: linear-gradient(135deg, #FF007A 0%, #00F0FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bet</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 50%, rgba(0,240,255,0.3) 100%); border: 1px solid rgba(255,255,255,0.6); width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #FFF; font-size: 18px; box-shadow: 0 10px 25px rgba(0, 240, 255, 0.3), inset 0 1.5px 1.5px rgba(255,255,255,0.9);">⚡</div>
+            <span style="font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">
+                <span style="color: #FFFFFF;">Personal</span>
+                <span style="background: linear-gradient(135deg, #00F0FF 0%, #0A84FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bet</span>
             </span>
         </div>
-        <div style="color: #717E92; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 6px;">
-            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #00F0FF; box-shadow: 0 0 10px #00F0FF;"></span>
-            AI Autonomous Sportsbook Intelligence
+        <div style="color: #94A3B8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; display: flex; align-items: center; gap: 8px;">
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00F0FF; box-shadow: 0 0 12px #00F0FF;"></span>
+            Autonomous Sportsbook Intelligence
         </div>
     </div>
     """)
 
-    # Streamlined Liquid Glass Dock
+    # Apple Specular Glass Dock
     nav_tabs = [
         "Predictions", "AI Predict", "Safe Bets", "Converter",
         "Optimizer", "Odds", "Code Checker", "Compare"
@@ -453,10 +501,10 @@ def main():
     # -------------------------------------------------------------
     if current_module == "Predictions":
         render_html("""
-        <div class="hero-container">
-            <div class="hero-badge">Verified Fixtures Live Feed</div>
-            <h1 class="hero-title">Match Predictions.</h1>
-            <p style="color: #8E9BAE; margin: 0; font-size: 14px;">Automated probabilistic forecasting across 26 global domestic leagues.</p>
+        <div style="padding: 1.5rem 0 1rem 0;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); margin-bottom: 0.8rem;">Live Match Center</div>
+            <h1 style="font-size: clamp(2rem, 4vw + 1rem, 3.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.8rem 0; color: #FFFFFF;">Match Predictions.</h1>
+            <p style="color: #94A3B8; margin: 0; font-size: 14px;">Automated probabilistic forecasting across 26 global domestic leagues.</p>
         </div>
         """)
 
@@ -484,7 +532,7 @@ def main():
         if search_club:
             filtered = [m for m in filtered if search_club in m["home"].lower() or search_club in m["away"].lower()]
 
-        render_html(f"""<div style="margin: 0.8rem 0; color: #8E9BAE; font-size: 13px;">Displaying <strong style="color: #00F0FF;">{len(filtered)}</strong> active matches</div>""")
+        render_html(f"""<div style="margin: 0.8rem 0; color: #94A3B8; font-size: 13px;">Displaying <strong style="color: #00F0FF;">{len(filtered)}</strong> active matches</div>""")
 
         for match in filtered:
             h, a, comp, kickoff = match["home"], match["away"], match["comp"], match["kickoff"]
@@ -495,7 +543,8 @@ def main():
             boom_pick = "Over 2.5 Goals" if d["totals"]["Over 2.5"] >= 58 else ("BTTS (GG)" if d["btts"]["GG (Yes)"] >= 58 else f"{h} to Win")
             boom_prob = d["totals"]["Over 2.5"] if "Over" in boom_pick else (d["btts"]["GG (Yes)"] if "BTTS" in boom_pick else d["1x2"]["Home Win"])
 
-            card = f"""<div class="liquid-card"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;"><div style="display: flex; align-items: center; gap: 6px; color: #8E9BAE; font-size: 12px; font-weight: 600;">{ICONS['trophy']} {comp}</div><div style="color: #505B6E; font-size: 12px;">{ICONS['clock']} {kickoff}</div></div><div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px;"><h3 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: #FFF;">{h} <span style="color: #FF007A; font-weight: 300;">vs</span> {a}</h3><div><span class="pill-safe">{safe_pick}</span> <span class="pill-boom">{boom_pick}</span></div></div><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Banker Floor</div><div class="cell-value" style="color: #00F0FF;">{safe_prob:.1f}%</div></div><div class="metric-cell"><div class="cell-label">Boom Opportunity</div><div class="cell-value" style="color: #FF007A;">{boom_prob:.1f}%</div></div><div class="metric-cell"><div class="cell-label">Sniper Score</div><div class="cell-value">{d['top_score'][0]} ({d['top_score'][1]}%)</div></div><div class="metric-cell"><div class="cell-label">Confidence</div><div class="cell-value">{d['confidence']}/10</div></div></div></div>"""
+            # Exact Specular Glass Capsule Card
+            card = f"""<div class="glass-capsule-card"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;"><div style="display: flex; align-items: center; gap: 6px; color: #94A3B8; font-size: 12px; font-weight: 700; text-transform: uppercase;">{ICONS['trophy']} {comp}</div><div style="color: #64748B; font-size: 12px; font-weight: 600;">{ICONS['clock']} {kickoff}</div></div><div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px;"><h3 style="margin: 0; font-size: clamp(1.4rem, 2.2vw, 1.9rem); font-weight: 800; color: #FFF; letter-spacing: -0.03em;">{h} <span style="color: #64748B; font-weight: 400;">vs</span> {a}</h3><div><span class="pill-safe">{safe_pick}</span> <span class="pill-boom">{boom_pick}</span></div></div><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Banker Floor</div><div class="cell-value" style="color: #00F0FF;">{safe_prob:.1f}%</div></div><div class="metric-cell"><div class="cell-label">Boom Opportunity</div><div class="cell-value" style="color: #FF2D55;">{boom_prob:.1f}%</div></div><div class="metric-cell"><div class="cell-label">Sniper Score</div><div class="cell-value">{d['top_score'][0]} ({d['top_score'][1]}%)</div></div><div class="metric-cell"><div class="cell-label">Confidence</div><div class="cell-value">{d['confidence']}/10</div></div></div></div>"""
             render_html(card)
 
             with st.expander(f"Full Market Breakdown: {h} vs {a}"):
@@ -510,10 +559,10 @@ def main():
     # -------------------------------------------------------------
     elif current_module == "AI Predict":
         render_html("""
-        <div class="hero-container">
-            <div class="hero-badge">Interactive Neural Matrix</div>
-            <h1 class="hero-title">AI Custom Predictor.</h1>
-            <p style="color: #8E9BAE; font-size: 14px;">Simulate any matchup worldwide with instant Poisson goal tensors.</p>
+        <div style="padding: 1.5rem 0 1rem 0;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); margin-bottom: 0.8rem;">Interactive Neural Simulator</div>
+            <h1 style="font-size: clamp(2rem, 4vw + 1rem, 3.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.8rem 0; color: #FFFFFF;">AI Custom Predictor.</h1>
+            <p style="color: #94A3B8; font-size: 14px;">Simulate any matchup worldwide with instant Poisson goal tensors.</p>
         </div>
         """)
         c1, c2 = st.columns(2)
@@ -524,7 +573,7 @@ def main():
 
         if st.button("Run Simulation", type="primary", use_container_width=True):
             d = CompleteMarketCalculator.evaluate_match(engine, h_sim, a_sim)
-            sim_box = f"""<div class="liquid-card" style="margin-top: 15px;"><h2 style="color: #FFF; margin: 0 0 10px 0;">{h_sim} vs {a_sim}</h2><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Predicted Winner</div><div class="cell-value" style="color: #00F0FF;">{h_sim if d['1x2']['Home Win'] >= d['1x2']['Away Win'] else a_sim}</div></div><div class="metric-cell"><div class="cell-label">Double Chance Floor</div><div class="cell-value">{max(d['dc']['1X'], d['dc']['X2'])}%</div></div><div class="metric-cell"><div class="cell-label">Over 2.5 Goals</div><div class="cell-value">{d['totals']['Over 2.5']}%</div></div><div class="metric-cell"><div class="cell-label">Exact Score</div><div class="cell-value" style="color: #FF007A;">{d['top_score'][0]}</div></div></div></div>"""
+            sim_box = f"""<div class="glass-capsule-card" style="margin-top: 15px;"><h2 style="color: #FFF; margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 800;">{h_sim} vs {a_sim}</h2><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Predicted Winner</div><div class="cell-value" style="color: #00F0FF;">{h_sim if d['1x2']['Home Win'] >= d['1x2']['Away Win'] else a_sim}</div></div><div class="metric-cell"><div class="cell-label">Double Chance Floor</div><div class="cell-value">{max(d['dc']['1X'], d['dc']['X2'])}%</div></div><div class="metric-cell"><div class="cell-label">Over 2.5 Goals</div><div class="cell-value">{d['totals']['Over 2.5']}%</div></div><div class="metric-cell"><div class="cell-label">Exact Score</div><div class="cell-value" style="color: #FF2D55;">{d['top_score'][0]}</div></div></div></div>"""
             render_html(sim_box)
 
 
@@ -533,10 +582,10 @@ def main():
     # -------------------------------------------------------------
     elif current_module == "Safe Bets":
         render_html("""
-        <div class="hero-container">
-            <div class="hero-badge">High-Probability Banker Slip</div>
-            <h1 class="hero-title">Safe Bets Generator.</h1>
-            <p style="color: #8E9BAE; font-size: 14px;">The AI scans all active games to assemble optimal, low-risk accumulator tickets.</p>
+        <div style="padding: 1.5rem 0 1rem 0;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); margin-bottom: 0.8rem;">Autonomous Accumulator Architect</div>
+            <h1 style="font-size: clamp(2rem, 4vw + 1rem, 3.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.8rem 0; color: #FFFFFF;">Safe Bets Generator.</h1>
+            <p style="color: #94A3B8; font-size: 14px;">The AI scans all active games to assemble optimal, low-risk accumulator tickets.</p>
         </div>
         """)
         c_odd, c_legs = st.columns(2)
@@ -573,9 +622,9 @@ def main():
                     total_odd *= leg["fair_odd"]
                     total_prob *= (leg["prob"] / 100.0)
 
-                slip_html = f"""<div class="liquid-card" style="margin-top: 15px;"><div style="display: flex; justify-content: space-between;"><span class="pill-safe">🛡️ BANKER TICKET</span><span style="font-weight: 800; font-size: 1.3rem; color: #00F0FF;">Total Odds: {total_odd:.2f}x</span></div><p style="color: #8E9BAE; font-size: 13px; margin: 8px 0 15px 0;">Calculated Combined Win Probability: <strong style="color: #FFF;">{total_prob*100:.1f}%</strong></p>"""
+                slip_html = f"""<div class="glass-capsule-card" style="margin-top: 15px;"><div style="display: flex; justify-content: space-between;"><span class="pill-safe">🛡️ BANKER TICKET</span><span style="font-weight: 800; font-size: 1.4rem; color: #00F0FF;">Total Odds: {total_odd:.2f}x</span></div><p style="color: #94A3B8; font-size: 13px; margin: 8px 0 16px 0;">Calculated Combined Win Probability: <strong style="color: #FFF;">{total_prob*100:.1f}%</strong></p>"""
                 for leg in selected_legs:
-                    slip_html += f"""<div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between;"><div><strong>{leg['match']}</strong> <span style="color: #717E92; font-size: 12px;">[{leg['comp']}]</span><div style="color: #00F0FF; font-size: 13px;">👉 {leg['selection']}</div></div><div style="font-weight: 700;">{leg['fair_odd']} odds <div style="font-size: 11px; color: #8E9BAE;">{leg['prob']:.1f}%</div></div></div>"""
+                    slip_html += f"""<div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;"><div><strong style="color: #FFF;">{leg['match']}</strong> <span style="color: #64748B; font-size: 12px;">[{leg['comp']}]</span><div style="color: #00F0FF; font-size: 13px; font-weight: 700;">👉 {leg['selection']}</div></div><div style="text-align: right; font-weight: 800;">{leg['fair_odd']} odds <div style="font-size: 11px; color: #94A3B8;">{leg['prob']:.1f}%</div></div></div>"""
                 slip_html += "</div>"
                 render_html(slip_html)
 
@@ -585,10 +634,10 @@ def main():
     # -------------------------------------------------------------
     elif current_module == "Converter":
         render_html("""
-        <div class="hero-container">
-            <div class="hero-badge">Universal Code Bridge</div>
-            <h1 class="hero-title">Betting Code Converter.</h1>
-            <p style="color: #8E9BAE; font-size: 14px;">Translate betting codes and market selections across major sportsbooks instantly.</p>
+        <div style="padding: 1.5rem 0 1rem 0;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); margin-bottom: 0.8rem;">Cross-Platform Bridge</div>
+            <h1 style="font-size: clamp(2rem, 4vw + 1rem, 3.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.8rem 0; color: #FFFFFF;">Booking Code Converter.</h1>
+            <p style="color: #94A3B8; font-size: 14px;">Translate betting codes and market selections across major sportsbooks instantly.</p>
         </div>
         """)
         c_src_bk, c_dst_bk = st.columns(2)
@@ -601,7 +650,7 @@ def main():
 
         if st.button("Convert Code", type="primary", use_container_width=True):
             mock_hash = hex(abs(hash(code_input + target_platform)))[2:9].upper()
-            conv_html = f"""<div class="liquid-card" style="margin-top: 15px;"><span class="pill-safe">CONVERSION SUCCESSFUL</span><h3 style="color: #FFF; margin: 12px 0 6px 0;">{target_platform} Converted Code:</h3><div style="background: rgba(0, 240, 255, 0.1); border: 1px dashed #00F0FF; border-radius: 12px; padding: 16px; font-size: 24px; font-weight: 800; color: #00F0FF; letter-spacing: 2px;">{mock_hash}</div><p style="color: #8E9BAE; font-size: 13px; margin-top: 10px;">Translated from <strong>{source_platform}</strong> ({code_input}) with 100% matched event IDs and odds alignment.</p></div>"""
+            conv_html = f"""<div class="glass-capsule-card" style="margin-top: 15px;"><span class="pill-safe">CONVERSION SUCCESSFUL</span><h3 style="color: #FFF; margin: 12px 0 6px 0;">{target_platform} Converted Code:</h3><div style="background: rgba(0, 240, 255, 0.08); border: 1px dashed rgba(0, 240, 255, 0.4); border-radius: 20px; padding: 20px; font-size: 26px; font-weight: 900; color: #00F0FF; letter-spacing: 3px; text-align: center;">{mock_hash}</div><p style="color: #94A3B8; font-size: 13px; margin-top: 12px;">Translated from <strong>{source_platform}</strong> ({code_input}) with 100% matched event IDs and odds alignment.</p></div>"""
             render_html(conv_html)
 
 
@@ -610,10 +659,10 @@ def main():
     # -------------------------------------------------------------
     elif current_module == "Optimizer":
         render_html("""
-        <div class="hero-container">
-            <div class="hero-badge">Mathematical Bankroll Engine</div>
-            <h1 class="hero-title">Bet Slip & Kelly Optimizer.</h1>
-            <p style="color: #8E9BAE; font-size: 14px;">Compute mathematical Expected Value (+EV) and optimal fractional Kelly stakes.</p>
+        <div style="padding: 1.5rem 0 1rem 0;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); margin-bottom: 0.8rem;">Mathematical Bankroll Engineering</div>
+            <h1 style="font-size: clamp(2rem, 4vw + 1rem, 3.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.8rem 0; color: #FFFFFF;">Bet Slip & Kelly Optimizer.</h1>
+            <p style="color: #94A3B8; font-size: 14px;">Compute mathematical Expected Value (+EV) and optimal fractional Kelly stakes.</p>
         </div>
         """)
         c1, c2, c3 = st.columns(3)
@@ -632,7 +681,7 @@ def main():
         recommended_stake = safe_half_kelly * total_bankroll
         ev = (p * (market_odds - 1.0)) - q
 
-        opt_html = f"""<div class="liquid-card" style="margin-top: 15px;"><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Expected Value (+EV)</div><div class="cell-value" style="color: {'#00F0FF' if ev > 0 else '#FF4D4D'};">{'+' if ev > 0 else ''}{ev*100:.1f}%</div></div><div class="metric-cell"><div class="cell-label">Half-Kelly Stake</div><div class="cell-value">{safe_half_kelly*100:.1f}% of Bank</div></div><div class="metric-cell"><div class="cell-label">Optimal Stake Amount</div><div class="cell-value" style="color: #00F0FF;">{recommended_stake:.2f}</div></div></div><p style="color: #8E9BAE; font-size: 13px; margin: 0;"><strong>Verdict:</strong> {'Profitable Edge Detected (+EV). Staking recommended.' if ev > 0 else 'Negative Edge (-EV). Avoid betting this market.'}</p></div>"""
+        opt_html = f"""<div class="glass-capsule-card" style="margin-top: 15px;"><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Expected Value (+EV)</div><div class="cell-value" style="color: {'#00F0FF' if ev > 0 else '#FF2D55'};">{'+' if ev > 0 else ''}{ev*100:.1f}%</div></div><div class="metric-cell"><div class="cell-label">Half-Kelly Stake</div><div class="cell-value">{safe_half_kelly*100:.1f}% of Bank</div></div><div class="metric-cell"><div class="cell-label">Optimal Stake Amount</div><div class="cell-value" style="color: #00F0FF;">{recommended_stake:.2f}</div></div></div><p style="color: #94A3B8; font-size: 13px; margin: 0;"><strong>Verdict:</strong> {'Profitable Edge Detected (+EV). Staking recommended.' if ev > 0 else 'Negative Edge (-EV). Avoid betting this market.'}</p></div>"""
         render_html(opt_html)
 
 
@@ -641,10 +690,10 @@ def main():
     # -------------------------------------------------------------
     elif current_module == "Odds":
         render_html("""
-        <div class="hero-container">
-            <div class="hero-badge">Pricing Architecture</div>
-            <h1 class="hero-title">Fair Odds & Bookmaker Vig.</h1>
-            <p style="color: #8E9BAE; font-size: 14px;">Detect bookmaker overround margins and strip vig to reveal true market fair odds.</p>
+        <div style="padding: 1.5rem 0 1rem 0;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); margin-bottom: 0.8rem;">True Probability Engine</div>
+            <h1 style="font-size: clamp(2rem, 4vw + 1rem, 3.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.8rem 0; color: #FFFFFF;">Fair Odds & Bookmaker Vig.</h1>
+            <p style="color: #94A3B8; font-size: 14px;">Detect bookmaker overround margins and strip vig to reveal true market fair odds.</p>
         </div>
         """)
         c1, c2, c3 = st.columns(3)
@@ -660,7 +709,7 @@ def main():
         fair_x = 1.0 / ((1.0 / odd_x) / (1.0 + margin/100.0))
         fair_2 = 1.0 / ((1.0 / odd_2) / (1.0 + margin/100.0))
 
-        odds_html = f"""<div class="liquid-card" style="margin-top: 15px;"><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Bookmaker Margin (Vig)</div><div class="cell-value" style="color: {'#FF007A' if margin > 6.0 else '#00F0FF'};">{margin:.2f}%</div></div><div class="metric-cell"><div class="cell-label">True Fair Home (1)</div><div class="cell-value">{fair_1:.2f}</div></div><div class="metric-cell"><div class="cell-label">True Fair Draw (X)</div><div class="cell-value">{fair_x:.2f}</div></div><div class="metric-cell"><div class="cell-label">True Fair Away (2)</div><div class="cell-value">{fair_2:.2f}</div></div></div><p style="color: #8E9BAE; font-size: 13px; margin: 0;">Market Quality: <strong style="color: #FFF;">{'Competitive Low Vig' if margin <= 5.5 else 'High Margin (Overpriced Market)'}</strong></p></div>"""
+        odds_html = f"""<div class="glass-capsule-card" style="margin-top: 15px;"><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Bookmaker Margin (Vig)</div><div class="cell-value" style="color: {'#FF2D55' if margin > 6.0 else '#00F0FF'};">{margin:.2f}%</div></div><div class="metric-cell"><div class="cell-label">True Fair Home (1)</div><div class="cell-value">{fair_1:.2f}</div></div><div class="metric-cell"><div class="cell-label">True Fair Draw (X)</div><div class="cell-value">{fair_x:.2f}</div></div><div class="metric-cell"><div class="cell-label">True Fair Away (2)</div><div class="cell-value">{fair_2:.2f}</div></div></div><p style="color: #94A3B8; font-size: 13px; margin: 0;">Market Quality: <strong style="color: #FFF;">{'Competitive Low Vig' if margin <= 5.5 else 'High Margin (Overpriced Market)'}</strong></p></div>"""
         render_html(odds_html)
 
 
@@ -669,14 +718,13 @@ def main():
     # -------------------------------------------------------------
     elif current_module == "Code Checker":
         render_html("""
-        <div class="hero-container">
-            <div class="hero-badge">SportyBet Autonomous Ticket Auditor</div>
-            <h1 class="hero-title">SportyBet Code Intelligence.</h1>
-            <p style="color: #8E9BAE; font-size: 14px;">Paste any SportyBet booking code. The AI extracts the games, detects trap legs, and isolates the single highest-probability bets.</p>
+        <div style="padding: 1.5rem 0 1rem 0;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); margin-bottom: 0.8rem;">SportyBet Autonomous Ticket Auditor</div>
+            <h1 style="font-size: clamp(2rem, 4vw + 1rem, 3.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.8rem 0; color: #FFFFFF;">SportyBet Code Intelligence.</h1>
+            <p style="color: #94A3B8; font-size: 14px;">Paste any SportyBet booking code. The AI extracts the games, detects trap legs, and isolates the single highest-probability bets.</p>
         </div>
         """)
 
-        # Fetch today's fixtures to support the auditor
         active_feed = GlobalFixtureResearcher.fetch_all_fixtures(days_ahead=1).get("Today", [])
 
         c_in, c_mode = st.columns([3, 1])
@@ -699,7 +747,6 @@ def main():
                     h, a, pick, market = leg["home"], leg["away"], leg["pick"], leg["market"]
                     d = CompleteMarketCalculator.evaluate_match(engine, h, a)
 
-                    # Assess pick probability
                     if "Over 3.5" in pick:
                         leg_prob = d["totals"]["Over 3.5"]
                         upgrade_pick = "Over 1.5 Goals"
@@ -744,22 +791,20 @@ def main():
                         "confidence": d["confidence"]
                     })
 
-                # Slip Health Rating
                 health_score = round(min(10.0, max(2.0, (orig_compound_prob * 100.0) / 7.0 + 4.5)), 1)
                 trap_count = sum(1 for x in analyzed_legs if x["is_trap"])
 
-                # Display Overview Dashboard
                 audit_header = f"""
-                <div class="liquid-card" style="margin-top: 15px;">
+                <div class="glass-capsule-card" style="margin-top: 15px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <div>
                             <span class="pill-safe">SPORTYBET CODE: {sporty_code}</span>
-                            <h2 style="color: #FFF; margin: 8px 0 0 0;">Ticket Risk & Health Audit</h2>
+                            <h2 style="color: #FFF; margin: 10px 0 0 0; font-size: 1.8rem; font-weight: 800;">Ticket Risk & Health Audit</h2>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 11px; text-transform: uppercase; color: #8E9BAE; font-weight: 700;">Slip Health Score</div>
-                            <div style="font-size: 2.2rem; font-weight: 900; color: {'#00F0FF' if health_score >= 7.5 else ('#FFB800' if health_score >= 5.5 else '#FF4D4D')};">
-                                {health_score} <span style="font-size: 1rem; color: #717E92;">/ 10</span>
+                            <div style="font-size: 11px; text-transform: uppercase; color: #94A3B8; font-weight: 700; letter-spacing: 0.08em;">Slip Health Score</div>
+                            <div style="font-size: 2.4rem; font-weight: 900; color: {'#00F0FF' if health_score >= 7.5 else ('#FFB800' if health_score >= 5.5 else '#FF2D55')};">
+                                {health_score} <span style="font-size: 1rem; color: #64748B;">/ 10</span>
                             </div>
                         </div>
                     </div>
@@ -767,29 +812,27 @@ def main():
                     <div class="metrics-bar">
                         <div class="metric-cell">
                             <div class="cell-label">Original Ticket Win Rate</div>
-                            <div class="cell-value" style="color: #FF4D4D;">{orig_compound_prob*100:.1f}%</div>
-                            <div style="font-size: 11px; color: #8E9BAE;">High accumulator drop-off</div>
+                            <div class="cell-value" style="color: #FF2D55;">{orig_compound_prob*100:.1f}%</div>
+                            <div style="font-size: 11px; color: #94A3B8; margin-top: 3px;">High accumulator drop-off</div>
                         </div>
                         <div class="metric-cell">
                             <div class="cell-label">AI Optimized Win Rate</div>
                             <div class="cell-value" style="color: #00F0FF;">{opt_compound_prob*100:.1f}%</div>
-                            <div style="font-size: 11px; color: #38ef7d;">+{round((opt_compound_prob - orig_compound_prob)*100, 1)}% Edge boost</div>
+                            <div style="font-size: 11px; color: #38ef7d; margin-top: 3px;">+{round((opt_compound_prob - orig_compound_prob)*100, 1)}% Edge boost</div>
                         </div>
                         <div class="metric-cell">
                             <div class="cell-label">Dangerous Trap Legs</div>
-                            <div class="cell-value" style="color: {'#FF4D4D' if trap_count > 0 else '#00F0FF'};">{trap_count} Detected</div>
-                            <div style="font-size: 11px; color: #8E9BAE;">High-risk picks flagged below</div>
+                            <div class="cell-value" style="color: {'#FF2D55' if trap_count > 0 else '#00F0FF'};">{trap_count} Detected</div>
+                            <div style="font-size: 11px; color: #94A3B8; margin-top: 3px;">High-risk picks flagged below</div>
                         </div>
                     </div>
                 </div>
                 """
                 render_html(audit_header)
 
-                # SECTION 1: THE BEST GAMES TO BET ON FROM THIS CODE
                 st.markdown("### 🏆 Top Banker Selections From This Ticket")
                 st.caption("If you want the highest winning probability, bet these top selections as singles or a 2-leg safe accumulator:")
 
-                # Sort legs by probability
                 best_picks = sorted(analyzed_legs, key=lambda x: x["upgrade_prob"], reverse=True)[:3]
                 c_best1, c_best2, c_best3 = st.columns(3)
                 cols = [c_best1, c_best2, c_best3]
@@ -797,44 +840,43 @@ def main():
                 for idx, bp in enumerate(best_picks):
                     with cols[idx]:
                         render_html(f"""
-                        <div class="liquid-card" style="padding: 14px; border-color: rgba(0, 240, 255, 0.3);">
+                        <div class="glass-capsule-card" style="padding: 16px; border-radius: 24px;">
                             <span class="pill-safe">⭐ TOP SELECTION #{idx+1}</span>
-                            <h4 style="margin: 8px 0 4px 0; color: #FFF; font-size: 14px;">{bp['match']}</h4>
-                            <div style="color: #00F0FF; font-weight: 800; font-size: 16px;">{bp['upgrade_pick']}</div>
-                            <div style="color: #8E9BAE; font-size: 12px; margin-top: 4px;">Win Probability: <strong style="color: #FFF;">{bp['upgrade_prob']:.1f}%</strong></div>
+                            <h4 style="margin: 10px 0 4px 0; color: #FFF; font-size: 14px; font-weight: 700;">{bp['match']}</h4>
+                            <div style="color: #00F0FF; font-weight: 800; font-size: 17px;">{bp['upgrade_pick']}</div>
+                            <div style="color: #94A3B8; font-size: 12px; margin-top: 4px;">Win Probability: <strong style="color: #FFF;">{bp['upgrade_prob']:.1f}%</strong></div>
                         </div>
                         """)
 
-                # SECTION 2: LEG-BY-LEG AUDIT & TRAP WARNINGS
                 st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
                 st.markdown("### 📋 Detailed Leg-by-Leg Threat Breakdown")
 
                 for leg in analyzed_legs:
                     if leg["is_trap"]:
                         badge = """<span class="pill-trap">🔴 DANGER / TRAP LEG</span>"""
-                        border_color = "rgba(255, 77, 77, 0.3)"
+                        border_glow = "rgba(255, 45, 85, 0.4)"
                     elif leg["is_banker"]:
                         badge = """<span class="pill-safe">🟢 ULTRA BANKER</span>"""
-                        border_color = "rgba(0, 240, 255, 0.2)"
+                        border_glow = "rgba(0, 240, 255, 0.3)"
                     else:
                         badge = """<span class="pill-boom">🟡 MODERATE VALUE</span>"""
-                        border_color = "rgba(255, 255, 255, 0.08)"
+                        border_glow = "rgba(255, 255, 255, 0.15)"
 
                     leg_box = f"""
-                    <div class="liquid-card" style="border-color: {border_color}; margin-bottom: 12px;">
+                    <div class="glass-capsule-card" style="border-color: {border_glow}; border-radius: 24px; padding: 18px; margin-bottom: 12px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <strong>{leg['match']}</strong>
+                            <strong style="font-size: 15px; color: #FFF;">{leg['match']}</strong>
                             {badge}
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                            <div style="color: #8E9BAE; font-size: 13px;">
+                            <div style="color: #94A3B8; font-size: 13px;">
                                 Your Selection: <strong style="color: #FFF;">{leg['original_pick']}</strong>
                             </div>
-                            <div style="font-weight: 800; color: {'#FF4D4D' if leg['is_trap'] else '#00F0FF'};">
+                            <div style="font-weight: 800; font-size: 15px; color: {'#FF2D55' if leg['is_trap'] else '#00F0FF'};">
                                 {leg['original_prob']:.1f}% Win Chance
                             </div>
                         </div>
-                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 12px; color: #8E9BAE;">
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px; color: #94A3B8;">
                             💡 <strong style="color: #00F0FF;">AI Recommendation:</strong> {leg['upgrade_reason']} 
                             (Optimal Pick: <strong style="color: #FFF;">{leg['upgrade_pick']}</strong> @ {leg['upgrade_prob']:.1f}%)
                         </div>
@@ -848,10 +890,10 @@ def main():
     # -------------------------------------------------------------
     elif current_module == "Compare":
         render_html("""
-        <div class="hero-container">
-            <div class="hero-badge">Tactical Analytics</div>
-            <h1 class="hero-title">Head-to-Head Comparison.</h1>
-            <p style="color: #8E9BAE; font-size: 14px;">Side-by-side tactical breakdown of rolling attack rates, defensive concession, and xG.</p>
+        <div style="padding: 1.5rem 0 1rem 0;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.4); margin-bottom: 0.8rem;">Tactical Analytics</div>
+            <h1 style="font-size: clamp(2rem, 4vw + 1rem, 3.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.8rem 0; color: #FFFFFF;">Head-to-Head Comparison.</h1>
+            <p style="color: #94A3B8; font-size: 14px;">Side-by-side tactical breakdown of rolling attack rates, defensive concession, and xG.</p>
         </div>
         """)
         c1, c2 = st.columns(2)
@@ -865,7 +907,7 @@ def main():
             h_stat = d["raw_h_stats"]
             a_stat = d["raw_a_stats"]
 
-            comp_html = f"""<div class="liquid-card" style="margin-top: 15px;"><h2 style="color: #FFF; text-align: center; margin-bottom: 20px;">{t1} <span style="color: #FF007A;">vs</span> {t2}</h2><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;"><div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 16px;"><h3 style="color: #00F0FF; margin-top: 0;">{t1} (Home Focus)</h3><div>• Expected Goals (xG): <strong>{d['xg']['home']}</strong></div><div>• 5-Match Rolling Attack: <strong>{h_stat['roll_gf']:.2f} G/M</strong></div><div>• 5-Match Rolling Defense: <strong>{h_stat['roll_ga']:.2f} GA/M</strong></div><div>• Projected Win Probability: <strong style="color: #00F0FF;">{d['1x2']['Home Win']}%</strong></div></div><div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 16px;"><h3 style="color: #FF007A; margin-top: 0;">{t2} (Away Focus)</h3><div>• Expected Goals (xG): <strong>{d['xg']['away']}</strong></div><div>• 5-Match Rolling Attack: <strong>{a_stat['roll_gf']:.2f} G/M</strong></div><div>• 5-Match Rolling Defense: <strong>{a_stat['roll_ga']:.2f} GA/M</strong></div><div>• Projected Win Probability: <strong style="color: #FF007A;">{d['1x2']['Away Win']}%</strong></div></div></div></div>"""
+            comp_html = f"""<div class="glass-capsule-card" style="margin-top: 15px;"><h2 style="color: #FFF; text-align: center; margin-bottom: 20px; font-size: 1.8rem; font-weight: 800;">{t1} <span style="color: #FF2D55;">vs</span> {t2}</h2><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;"><div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 18px;"><h3 style="color: #00F0FF; margin-top: 0; font-size: 1.2rem;">{t1} (Home Focus)</h3><div style="margin-bottom: 6px;">• Expected Goals (xG): <strong>{d['xg']['home']}</strong></div><div style="margin-bottom: 6px;">• 5-Match Rolling Attack: <strong>{h_stat['roll_gf']:.2f} G/M</strong></div><div style="margin-bottom: 6px;">• 5-Match Rolling Defense: <strong>{h_stat['roll_ga']:.2f} GA/M</strong></div><div>• Projected Win Probability: <strong style="color: #00F0FF;">{d['1x2']['Home Win']}%</strong></div></div><div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 18px;"><h3 style="color: #FF2D55; margin-top: 0; font-size: 1.2rem;">{t2} (Away Focus)</h3><div style="margin-bottom: 6px;">• Expected Goals (xG): <strong>{d['xg']['away']}</strong></div><div style="margin-bottom: 6px;">• 5-Match Rolling Attack: <strong>{a_stat['roll_gf']:.2f} G/M</strong></div><div style="margin-bottom: 6px;">• 5-Match Rolling Defense: <strong>{a_stat['roll_ga']:.2f} GA/M</strong></div><div>• Projected Win Probability: <strong style="color: #FF2D55;">{d['1x2']['Away Win']}%</strong></div></div></div></div>"""
             render_html(comp_html)
 
 
