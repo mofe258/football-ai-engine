@@ -1,6 +1,6 @@
 """
 ================================================================================
-PERSONAL BET — DYNAMIC MULTI-MARKET SPORTS INTELLIGENCE PLATFORM
+PERSONAL BET — COMPREHENSIVE MULTI-MARKET SPORTS INTELLIGENCE PLATFORM
 ================================================================================
 """
 
@@ -16,9 +16,9 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any
 
 # =====================================================================
-# IMPORT BRIDGE (Handles root vs core/ file locations seamlessly)
+# IMPORT BRIDGE (Supports adaptersplus.py and adapters.py seamlessly)
 # =====================================================================
-for mod_name in ['database', 'adapters', 'prediction', 'backtesting']:
+for mod_name in ['database', 'adaptersplus', 'adapters', 'prediction', 'backtesting']:
     try:
         mod = __import__(mod_name)
         if 'core' not in sys.modules:
@@ -29,12 +29,21 @@ for mod_name in ['database', 'adapters', 'prediction', 'backtesting']:
 
 try:
     from database import init_db, get_connection
-    from adapters import CanonicalFixtureService, APIFootballAdapter, TheOddsAPIAdapter, TelegramTipsterAdapter
+except ImportError:
+    from core.database import init_db, get_connection
+
+try:
+    from adaptersplus import CanonicalFixtureService, APIFootballAdapter, TheOddsAPIAdapter, TelegramTipsterAdapter
+except ImportError:
+    try:
+        from adapters import CanonicalFixtureService, APIFootballAdapter, TheOddsAPIAdapter, TelegramTipsterAdapter
+    except ImportError:
+        from core.adapters import CanonicalFixtureService, APIFootballAdapter, TheOddsAPIAdapter, TelegramTipsterAdapter
+
+try:
     from prediction import DixonColesEngine, MarketPricingEngine
     from backtesting import BacktestService
 except ImportError:
-    from core.database import init_db, get_connection
-    from core.adapters import CanonicalFixtureService, APIFootballAdapter, TheOddsAPIAdapter, TelegramTipsterAdapter
     from core.prediction import DixonColesEngine, MarketPricingEngine
     from core.backtesting import BacktestService
 
@@ -86,7 +95,7 @@ render_html("""
         max-width: 1260px !important;
     }
 
-    /* REDESIGNED APPLE VISIONOS DOCK: STRICT NO CLUMPING + NO RADIO CIRCLES */
+    /* REDESIGNED APPLE VISIONOS DOCK: NO TEXT WRAPPING, NO RADIO CIRCLES */
     div[data-testid="stRadio"] > div[role="radiogroup"] {
         display: flex !important;
         flex-direction: row !important;
@@ -100,7 +109,7 @@ render_html("""
         -webkit-backdrop-filter: blur(35px) saturate(200%) !important;
         border: 1px solid rgba(255, 255, 255, 0.18) !important;
         border-radius: 9999px !important;
-        padding: 6px 12px !important;
+        padding: 6px 10px !important;
         box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.9), inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.4) !important;
         margin-bottom: 1.25rem !important;
         align-items: center !important;
@@ -211,6 +220,36 @@ render_html("""
         margin-top: 3px;
     }
 
+    /* ALL MARKETS ON-CARD DASHBOARD */
+    .market-strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 8px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .market-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 10px 12px;
+        text-align: center;
+    }
+    .market-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94A3B8;
+        margin-bottom: 3px;
+    }
+    .market-val {
+        font-size: 14px;
+        font-weight: 800;
+        color: #FFFFFF;
+    }
+
     .pill-signal {
         padding: 5px 12px;
         border-radius: 9999px;
@@ -239,6 +278,7 @@ render_html("""
     @media (max-width: 768px) {
         .triple-score-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
         .glass-card { border-radius: 20px !important; padding: 14px !important; }
+        .market-strip { grid-template-columns: repeat(2, 1fr) !important; }
     }
 </style>
 """)
@@ -249,7 +289,7 @@ def load_ml_engine():
 
 
 # =====================================================================
-# DYNAMIC MULTI-MARKET SELECTION INTELLIGENCE (NOT JUST 1X!)
+# DYNAMIC MULTI-MARKET SELECTION INTELLIGENCE (ALL MARKETS EVALUATED)
 # =====================================================================
 
 class MultiMarketIntelligence:
@@ -257,12 +297,13 @@ class MultiMarketIntelligence:
     def rank_all_markets(h: str, a: str, res: Dict[str, Any]) -> Dict[str, Any]:
         candidates = []
 
-        # 1. Full-Time 1X2 Outright
+        # 1. 1X2 Outright
         p_h = float(res["p_1x2"]["1"])
+        p_x = float(res["p_1x2"]["X"])
         p_a = float(res["p_1x2"]["2"])
-        if p_h >= 54.0:
+        if p_h >= 52.0:
             candidates.append({"market": "1X2 Result", "pick": f"{h} to Win", "prob": p_h, "type": "OUTRIGHT", "odd": res["odds_1x2"]["1"]})
-        elif p_a >= 50.0:
+        elif p_a >= 48.0:
             candidates.append({"market": "1X2 Result", "pick": f"{a} to Win", "prob": p_a, "type": "OUTRIGHT", "odd": res["odds_1x2"]["2"]})
 
         # 2. Double Chance
@@ -300,15 +341,15 @@ class MultiMarketIntelligence:
         p_ht_o05 = float(res["p_ht"]["1H_O05"])
         candidates.append({"market": "1st Half Goals", "pick": "1H Over 0.5 Goals", "prob": p_ht_o05, "type": "SAFETY", "odd": round(1.055 / (p_ht_o05 / 100.0), 2)})
 
-        # Determine Safe Banker
+        # Sort for Banker (Highest statistical floor)
         safe_banker = max(candidates, key=lambda x: x["prob"])
 
-        # Determine Boom Pick
+        # Sort for Boom Pick
         boom_candidates = [c for c in candidates if c["type"] in ["BOOM", "OUTRIGHT"] and c["prob"] >= 54.0]
         boom_pick = max(boom_candidates, key=lambda x: x["prob"]) if boom_candidates else safe_banker
 
-        # Determine Primary Best Pick
-        best_market = boom_pick if boom_pick["prob"] >= 60.0 else safe_banker
+        # Best Pick
+        best_market = boom_pick if boom_pick["prob"] >= 59.0 else safe_banker
 
         return {
             "safe_banker": safe_banker,
@@ -338,7 +379,7 @@ def main():
     </div>
     """)
 
-    # Clean, non-wrapping dock labels
+    # Non-wrapping dock tabs
     nav_tabs = [
         "⚡ Fixtures", "🔍 Analysis", "📊 Markets", "🤖 AI Predict",
         "🎯 Tipsters", "🛡️ Safe Slip", "📈 Kelly / EV", "⚖️ Odds Vig",
@@ -353,7 +394,7 @@ def main():
         <div style="padding: 0.8rem 0 0.4rem 0;">
             <div style="display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00F0FF; margin-bottom: 0.5rem;">Verified Live Match Center</div>
             <h1 style="font-size: clamp(1.8rem, 3.5vw + 1rem, 2.8rem); font-weight: 800; letter-spacing: -0.04em; margin: 0 0 0.4rem 0; color: #FFFFFF;">Football Fixture Centre.</h1>
-            <p style="color: #94A3B8; font-size: 13.5px; margin: 0;">Multi-market probabilistic forecasting across 26 global domestic leagues.</p>
+            <p style="color: #94A3B8; font-size: 13.5px; margin: 0;">Multi-market probabilistic forecasts across 26 global domestic leagues.</p>
         </div>
         """)
         schedule = CanonicalFixtureService.get_canonical_schedule()
@@ -365,7 +406,7 @@ def main():
 
         fixtures = schedule.get(day_pick, [])
         if status_filter == "Confirmed Lineups Only":
-            fixtures = [f for f in fixtures if "Confirmed" in f["lineup_status"]]
+            fixtures = [f for f in fixtures if "Confirmed" in f.get("lineup_status", "")]
 
         if not fixtures:
             render_html(f"""
@@ -381,10 +422,24 @@ def main():
                 res = MarketPricingEngine.evaluate_markets(engine, h, a, is_conf)
                 sig_name, sig_cls, sig_desc = res["decision"]
 
+                # Dynamic multi-market selection
                 market_eval = MultiMarketIntelligence.rank_all_markets(h, a, res)
                 safe_b = market_eval["safe_banker"]
                 boom_b = market_eval["boom_pick"]
                 best_m = market_eval["best_market"]
+
+                # All betting market values
+                p1 = f"{res['p_1x2']['1']:.1f}%"
+                px = f"{res['p_1x2']['X']:.1f}%"
+                p2 = f"{res['p_1x2']['2']:.1f}%"
+                p1x = f"{res['p_dc']['1X']:.1f}%"
+                px2 = f"{res['p_dc']['X2']:.1f}%"
+                p_o15 = f"{res['p_goals']['O1.5']:.1f}%"
+                p_o25 = f"{res['p_goals']['O2.5']:.1f}%"
+                p_u25 = f"{res['p_goals']['U2.5']:.1f}%"
+                p_btts = f"{res['p_btts']['GG']:.1f}%"
+                p_ng = f"{res['p_btts']['NG']:.1f}%"
+                top_score = res['top_scores'][0][0]
 
                 render_html(f"""
                 <div class="glass-card">
@@ -396,11 +451,13 @@ def main():
                         <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: #FFF;">{h} <span style="color: #64748B; font-weight: 400;">vs</span> {a}</h2>
                         <span style="font-size: 12px; color: {'#38ef7d' if is_conf else '#FFB800'}; font-weight: 700;">{l_status}</span>
                     </div>
+
+                    <!-- AI Primary Highlights -->
                     <div class="triple-score-grid">
                         <div class="score-cell">
                             <div class="score-title">🎯 Best AI Market Pick</div>
                             <div class="score-value" style="color: #00F0FF;">{best_m['pick']}</div>
-                            <div class="score-sub">Win Probability: <strong style="color: #FFF;">{best_m['prob']:.1f}%</strong> ({best_m['market']})</div>
+                            <div class="score-sub">Win Chance: <strong style="color: #FFF;">{best_m['prob']:.1f}%</strong> ({best_m['market']})</div>
                         </div>
                         <div class="score-cell">
                             <div class="score-title">💥 Boom Opportunity</div>
@@ -412,6 +469,21 @@ def main():
                             <div class="score-value" style="color: #38ef7d;">{safe_b['pick']}</div>
                             <div class="score-sub">Survival Rate: <strong style="color: #FFF;">{safe_b['prob']:.1f}%</strong> (Lowest Risk)</div>
                         </div>
+                    </div>
+
+                    <!-- Complete On-Card Betting Markets -->
+                    <div class="market-strip">
+                        <div class="market-box"><div class="market-label">1X2 (1)</div><div class="market-val" style="color:#00F0FF;">{p1}</div></div>
+                        <div class="market-box"><div class="market-label">1X2 (X)</div><div class="market-val">{px}</div></div>
+                        <div class="market-box"><div class="market-label">1X2 (2)</div><div class="market-val">{p2}</div></div>
+                        <div class="market-box"><div class="market-label">Double Chance 1X</div><div class="market-val" style="color:#38ef7d;">{p1x}</div></div>
+                        <div class="market-box"><div class="market-label">Double Chance X2</div><div class="market-val">{px2}</div></div>
+                        <div class="market-box"><div class="market-label">Over 1.5 Goals</div><div class="market-val" style="color:#38ef7d;">{p_o15}</div></div>
+                        <div class="market-box"><div class="market-label">Over 2.5 Goals</div><div class="market-val" style="color:#FF2D55;">{p_o25}</div></div>
+                        <div class="market-box"><div class="market-label">Under 2.5 Goals</div><div class="market-val">{p_u25}</div></div>
+                        <div class="market-box"><div class="market-label">BTTS (GG: Yes)</div><div class="market-val" style="color:#FFB800;">{p_btts}</div></div>
+                        <div class="market-box"><div class="market-label">BTTS (NG: No)</div><div class="market-val">{p_ng}</div></div>
+                        <div class="market-box"><div class="market-label">Exact Score</div><div class="market-val" style="color:#00F0FF;">{top_score}</div></div>
                     </div>
                 </div>
                 """)
@@ -451,7 +523,7 @@ def main():
                 <div class="score-cell">
                     <div class="score-title">Top Correct Score</div>
                     <div class="score-value">{res['top_scores'][0][0]} <span style="font-size: 0.85rem; color: #94A3B8;">({res['top_scores'][0][1]:.1f}%)</span></div>
-                    <div class="score-sub">2nd: {res['top_scores'][1][0]}</div>
+                    <div class="score-sub">2nd Pick: {res['top_scores'][1][0]}</div>
                 </div>
             </div>
             <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px; font-size: 13px; color: #CBD5E1; margin-top: 10px;">
