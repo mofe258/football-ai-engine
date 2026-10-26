@@ -1,6 +1,6 @@
 """
 ================================================================================
-ADAPTERS PLUS — REAL-TIME MULTI-SOURCE FIXTURE INGESTION & DATA PROVIDERS
+REAL-TIME GLOBAL FIXTURE INGESTION & DATA PROVIDERS (ZERO FAKE MATCHES)
 ================================================================================
 """
 
@@ -131,56 +131,59 @@ class CanonicalFixtureService:
     @classmethod
     def normalize_team(cls, name: str) -> str:
         clean = name.strip()
-        lower = clean.lower()
-        return cls.CANONICAL_ALIASES.get(lower, clean)
+        return cls.CANONICAL_ALIASES.get(clean.lower(), clean)
 
     @classmethod
-    def _fetch_single_league(cls, league_tuple: Tuple[str, str]) -> List[Dict[str, Any]]:
-        code, name = league_tuple
-        url = f"https://site.api.espn.com/apis/site/v2/sports/soccer/{code}/scoreboard"
-        headers = {"User-Agent": "Mozilla/5.0"}
-        found = []
+    def _fetch_url(cls, url: str) -> List[Dict[str, Any]]:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+        }
+        matches = []
         try:
-            res = requests.get(url, headers=headers, timeout=2.5)
+            res = requests.get(url, headers=headers, timeout=4.0)
             if res.status_code == 200:
-                for ev in res.json().get("events", []):
+                events = res.json().get("events", [])
+                for ev in events:
                     status_state = ev.get("status", {}).get("type", {}).get("state", "")
-                    if status_state in ["pre", "in"]:
-                        comps = ev.get("competitions", [{}])[0]
-                        competitors = comps.get("competitors", [])
-                        venue_name = comps.get("venue", {}).get("fullName", "Official Stadium")
-                        h, a = None, None
-                        for c in competitors:
-                            tname = cls.normalize_team(c.get("team", {}).get("displayName") or c.get("team", {}).get("name") or "")
-                            if c.get("homeAway") == "home":
-                                h = tname
-                            else:
-                                a = tname
-                        raw_date = ev.get("date", "")
-                        kickoff = raw_date
-                        match_date_str = ""
-                        try:
-                            dt = datetime.strptime(raw_date, "%Y-%m-%dT%H:%M%z")
-                            kickoff = dt.strftime("%A, %b %d @ %H:%M UTC")
-                            match_date_str = dt.strftime("%Y-%m-%d")
-                        except Exception:
-                            pass
-                        if h and a:
-                            found.append({
-                                "canonical_id": hashlib.md5(f"{h}_{a}_{raw_date}".encode()).hexdigest()[:12],
-                                "home": h,
-                                "away": a,
-                                "comp": name,
-                                "kickoff": kickoff,
-                                "match_date": match_date_str,
-                                "status": "Live" if status_state == "in" else "Scheduled",
-                                "lineup_status": "Confirmed Starting XI" if status_state == "in" else "Projected Lineup",
-                                "venue": venue_name,
-                                "last_refresh": datetime.utcnow().strftime("%H:%M:%S UTC")
-                            })
+                    comps = ev.get("competitions", [{}])[0]
+                    competitors = comps.get("competitors", [])
+                    comp_name = ev.get("league", {}).get("name") or comps.get("league", {}).get("name") or "Football League"
+                    venue_name = comps.get("venue", {}).get("fullName", "Official Stadium")
+                    
+                    h, a = None, None
+                    for c in competitors:
+                        tname = cls.normalize_team(c.get("team", {}).get("displayName") or c.get("team", {}).get("name") or "")
+                        if c.get("homeAway") == "home":
+                            h = tname
+                        else:
+                            a = tname
+                    
+                    raw_date = ev.get("date", "")
+                    kickoff = raw_date
+                    match_date_str = ""
+                    try:
+                        dt = datetime.strptime(raw_date, "%Y-%m-%dT%H:%M%z")
+                        kickoff = dt.strftime("%A, %b %d @ %H:%M UTC")
+                        match_date_str = dt.strftime("%Y-%m-%d")
+                    except Exception:
+                        pass
+                    
+                    if h and a:
+                        matches.append({
+                            "canonical_id": hashlib.md5(f"{h}_{a}_{raw_date}".encode()).hexdigest()[:12],
+                            "home": h,
+                            "away": a,
+                            "comp": comp_name,
+                            "kickoff": kickoff,
+                            "match_date": match_date_str,
+                            "status": "Live" if status_state == "in" else ("Completed" if status_state == "post" else "Scheduled"),
+                            "lineup_status": "Confirmed Starting XI" if status_state == "in" else "Projected Lineup",
+                            "venue": venue_name,
+                            "last_refresh": datetime.utcnow().strftime("%H:%M:%S UTC")
+                        })
         except Exception:
             pass
-        return found
+        return matches
 
     @classmethod
     def get_canonical_schedule(cls) -> Dict[str, List[Dict[str, Any]]]:
@@ -189,11 +192,17 @@ class CanonicalFixtureService:
         today_str = now.strftime("%Y-%m-%d")
         tomorrow_str = (now + timedelta(days=1)).strftime("%Y-%m-%d")
 
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            futures = [
-                executor.submit(cls._fetch_single_league, l_tuple)
-                for l_tuple in cls.LEAGUE_REGISTRY
-            ]
+        urls_to_fetch = [
+            f"https://site.api.espn.com/apis/site/v2/sports/soccer/scoreboard?dates={today_str.replace('-', '')}",
+            f"https://site.api.espn.com/apis/site/v2/sports/soccer/scoreboard?dates={tomorrow_str.replace('-', '')}",
+            "https://site.api.espn.com/apis/site/v2/sports/soccer/scoreboard"
+        ]
+
+        for code, _ in cls.LEAGUE_REGISTRY[:10]:
+            urls_to_fetch.append(f"https://site.api.espn.com/apis/site/v2/sports/soccer/{code}/scoreboard")
+
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            futures = [executor.submit(cls._fetch_url, url) for url in urls_to_fetch]
             all_real_matches = []
             for f in futures:
                 for m in f.result():
