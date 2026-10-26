@@ -111,12 +111,14 @@ class TelegramTipsterAdapter:
 
 class CanonicalFixtureService:
     LEAGUE_REGISTRY = [
-        ("eng.1", "Premier League"), ("eng.2", "Championship"), ("eng.3", "League One"), ("eng.4", "League Two"),
-        ("esp.1", "La Liga"), ("esp.2", "La Liga 2"), ("ita.1", "Serie A"), ("ita.2", "Serie B"),
-        ("ger.1", "Bundesliga"), ("ger.2", "2. Bundesliga"), ("fra.1", "Ligue 1"), ("fra.2", "Ligue 2"),
-        ("uefa.champions", "Champions League"), ("uefa.europa", "Europa League"), ("uefa.europa.conf", "Conference League"),
-        ("por.1", "Primeira Liga"), ("ned.1", "Eredivisie"), ("tur.1", "Süper Lig"), ("sco.1", "Scottish Premiership"),
-        ("sau.1", "Saudi Pro League"), ("usa.1", "MLS"), ("bra.1", "Brasileirão"), ("arg.1", "Argentine Primera")
+        ("eng.1", "Premier League"), ("esp.1", "La Liga"), ("ita.1", "Serie A"),
+        ("ger.1", "Bundesliga"), ("fra.1", "Ligue 1"), ("uefa.champions", "Champions League"),
+        ("uefa.europa", "Europa League"), ("uefa.europa.conf", "Conference League"),
+        ("eng.2", "Championship"), ("eng.3", "League One"), ("eng.4", "League Two"),
+        ("esp.2", "La Liga 2"), ("ita.2", "Serie B"), ("ger.2", "2. Bundesliga"),
+        ("fra.2", "Ligue 2"), ("por.1", "Primeira Liga"), ("ned.1", "Eredivisie"),
+        ("tur.1", "Süper Lig"), ("sco.1", "Scottish Premiership"), ("sau.1", "Saudi Pro League"),
+        ("usa.1", "MLS"), ("bra.1", "Brasileirão"), ("arg.1", "Argentine Primera")
     ]
 
     CANONICAL_ALIASES = {
@@ -135,40 +137,47 @@ class CanonicalFixtureService:
         return cls.CANONICAL_ALIASES.get(lower, clean)
 
     @classmethod
-    def _fetch_single_league(cls, league_tuple: Tuple[str, str], date_str: str) -> List[Dict[str, Any]]:
+    def _fetch_single_league(cls, league_tuple: Tuple[str, str]) -> List[Dict[str, Any]]:
         code, name = league_tuple
-        url = f"https://site.api.espn.com/apis/site/v2/sports/soccer/{code}/scoreboard?dates={date_str}"
+        url = f"https://site.api.espn.com/apis/site/v2/sports/soccer/{code}/scoreboard"
         headers = {"User-Agent": "Mozilla/5.0"}
         found = []
         try:
-            res = requests.get(url, headers=headers, timeout=2.8)
+            res = requests.get(url, headers=headers, timeout=3.0)
             if res.status_code == 200:
                 for ev in res.json().get("events", []):
                     status_state = ev.get("status", {}).get("type", {}).get("state", "")
                     if status_state in ["pre", "in"]:
-                        comps = ev.get("competitions", [{}])[0].get("competitors", [])
+                        comps = ev.get("competitions", [{}])[0]
+                        competitors = comps.get("competitors", [])
+                        venue_name = comps.get("venue", {}).get("fullName", "Official Stadium")
                         h, a = None, None
-                        for c in comps:
+                        for c in competitors:
                             tname = cls.normalize_team(c.get("team", {}).get("displayName") or c.get("team", {}).get("name") or "")
                             if c.get("homeAway") == "home":
                                 h = tname
                             else:
                                 a = tname
                         raw_date = ev.get("date", "")
+                        kickoff = raw_date
+                        match_date_str = ""
                         try:
-                            kickoff = datetime.strptime(raw_date, "%Y-%m-%dT%H:%M%z").strftime("%H:%M UTC")
+                            dt = datetime.strptime(raw_date, "%Y-%m-%dT%H:%M%z")
+                            kickoff = dt.strftime("%A, %b %d @ %H:%M UTC")
+                            match_date_str = dt.strftime("%Y-%m-%d")
                         except Exception:
-                            kickoff = raw_date
+                            pass
                         if h and a:
                             found.append({
-                                "canonical_id": hashlib.md5(f"{h}_{a}_{date_str}".encode()).hexdigest()[:12],
+                                "canonical_id": hashlib.md5(f"{h}_{a}_{raw_date}".encode()).hexdigest()[:12],
                                 "home": h,
                                 "away": a,
                                 "comp": name,
                                 "kickoff": kickoff,
+                                "match_date": match_date_str,
                                 "status": "Live" if status_state == "in" else "Scheduled",
                                 "lineup_status": "Confirmed Starting XI" if status_state == "in" else "Projected Lineup",
-                                "venue": "Official Stadium Venue",
+                                "venue": venue_name,
                                 "last_refresh": datetime.utcnow().strftime("%H:%M:%S UTC")
                             })
         except Exception:
@@ -177,24 +186,29 @@ class CanonicalFixtureService:
 
     @classmethod
     def get_canonical_schedule(cls) -> Dict[str, List[Dict[str, Any]]]:
-        grouped = {"Today": [], "Tomorrow": []}
+        grouped = {"Today": [], "Tomorrow": [], "Upcoming": []}
         now = datetime.utcnow()
-        date_map = {
-            now.strftime("%Y%m%d"): "Today",
-            (now + timedelta(days=1)).strftime("%Y%m%d"): "Tomorrow"
-        }
+        today_str = now.strftime("%Y-%m-%d")
+        tomorrow_str = (now + timedelta(days=1)).strftime("%Y-%m-%d")
 
         with ThreadPoolExecutor(max_workers=10) as executor:
-            for date_str, label in date_map.items():
-                futures = [
-                    executor.submit(cls._fetch_single_league, l_tuple, date_str)
-                    for l_tuple in cls.LEAGUE_REGISTRY
-                ]
-                target_list = grouped[label]
-                for f in futures:
-                    for m in f.result():
-                        if not any(x["home"] == m["home"] and x["away"] == m["away"] for x in target_list):
-                            target_list.append(m)
+            futures = [
+                executor.submit(cls._fetch_single_league, l_tuple)
+                for l_tuple in cls.LEAGUE_REGISTRY
+            ]
+            all_real_matches = []
+            for f in futures:
+                for m in f.result():
+                    if not any(x["canonical_id"] == m["canonical_id"] for x in all_real_matches):
+                        all_real_matches.append(m)
 
-        # STRICT INTEGRITY: If no matches are found, return empty list! Never fabricate fake matches.
+        for m in all_real_matches:
+            m_date = m.get("match_date", "")
+            if m_date == today_str:
+                grouped["Today"].append(m)
+            elif m_date == tomorrow_str:
+                grouped["Tomorrow"].append(m)
+            else:
+                grouped["Upcoming"].append(m)
+
         return grouped
