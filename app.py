@@ -346,13 +346,33 @@ class GlobalFixtureResearcher:
 
 class CompleteMarketCalculator:
     @staticmethod
+    def _is_youth_or_reserve(team_name: str) -> bool:
+        lowered = team_name.lower()
+        youth_keywords = [" u21", " u23", " u19", " b ", " ii", "reserves", "women", " w"]
+        return any(k in lowered for k in youth_keywords)
+
+    @staticmethod
     def evaluate_match(engine, h: str, a: str) -> Dict[str, Any]:
         h_res = engine._resolve_team_name(h)
         a_res = engine._resolve_team_name(a)
 
-        avg_stats = {"roll_gf": 1.35, "roll_ga": 1.35, "roll_pts": 1.30}
-        h_stats = engine.team_stats.get(h_res, avg_stats)
-        a_stats = engine.team_stats.get(a_res, avg_stats)
+        # Base neutral baseline stats
+        avg_stats = {"roll_gf": 1.25, "roll_ga": 1.25, "roll_pts": 1.15}
+        h_found = h_res in engine.team_stats
+        a_found = a_res in engine.team_stats
+
+        h_stats = engine.team_stats.get(h_res, avg_stats).copy()
+        a_stats = engine.team_stats.get(a_res, avg_stats).copy()
+
+        # Youth / Reserve penalty adjustment (prevents U21 squad distortion)
+        if CompleteMarketCalculator._is_youth_or_reserve(h) and not CompleteMarketCalculator._is_youth_or_reserve(a):
+            h_stats["roll_gf"] *= 0.70
+            h_stats["roll_ga"] *= 1.35
+            h_stats["roll_pts"] *= 0.60
+        elif CompleteMarketCalculator._is_youth_or_reserve(a) and not CompleteMarketCalculator._is_youth_or_reserve(h):
+            a_stats["roll_gf"] *= 0.70
+            a_stats["roll_ga"] *= 1.35
+            a_stats["roll_pts"] *= 0.60
 
         features = np.array([[
             h_stats["roll_gf"], h_stats["roll_ga"], h_stats["roll_pts"],
@@ -362,18 +382,53 @@ class CompleteMarketCalculator:
         probs = engine.model.predict_proba(features)[0]
         p_home_ml, p_draw_ml, p_away_ml = probs[0], probs[1], probs[2]
 
-        lambda_h = max(0.4, (h_stats["roll_gf"] / 1.4) * (a_stats["roll_ga"] / 1.4) * 1.55)
-        lambda_a = max(0.3, (a_stats["roll_gf"] / 1.4) * (h_stats["roll_ga"] / 1.4) * 1.25)
+        # Natural Poisson Lambda calculation (dynamic home advantage factor: 1.18x instead of 1.55x)
+        home_advantage = 1.18
+        lambda_h = max(0.35, (h_stats["roll_gf"] / 1.35) * (a_stats["roll_ga"] / 1.35) * home_advantage)
+        lambda_a = max(0.25, (a_stats["roll_gf"] / 1.35) * (h_stats["roll_ga"] / 1.35) * (1.0 / (home_advantage * 0.95)))
 
+        # Dixon-Coles corrected Poisson bivariate matrix
         max_g = 7
         ft_matrix = np.zeros((max_g, max_g))
+        rho = -0.10  # Low-score correlation adjustment
+        
         for i in range(max_g):
             for j in range(max_g):
-                ft_matrix[i, j] = poisson.pmf(i, lambda_h) * poisson.pmf(j, lambda_a)
+                p_h = poisson.pmf(i, lambda_h)
+                p_a = poisson.pmf(j, lambda_a)
+                
+                # Apply tau adjustment for low scores (0-0, 1-0, 0-1, 1-1)
+                tau = 1.0
+                if i == 0 and j == 0:
+                    tau = 1.0 - (lambda_h * lambda_a * rho)
+                elif i == 0 and j == 1:
+                    tau = 1.0 + (lambda_h * rho)
+                elif i == 1 and j == 0:
+                    tau = 1.0 + (lambda_a * rho)
+                elif i == 1 and j == 1:
+                    tau = 1.0 - rho
+                    
+                ft_matrix[i, j] = p_h * p_a * max(0.001, tau)
+
         ft_matrix /= np.sum(ft_matrix)
 
-        p_dnb_h = p_home_ml / (p_home_ml + p_away_ml + 1e-9)
-        p_dnb_a = p_away_ml / (p_home_ml + p_away_ml + 1e-9)
+        # Poisson-derived outcomes
+        p_home_poiss = np.sum(np.tril(ft_matrix, -1))
+        p_draw_poiss = np.sum(np.diag(ft_matrix))
+        p_away_poiss = np.sum(np.triu(ft_matrix, 1))
+
+        # Blend ML model with Dixon-Coles Poisson (50/50 consensus ensemble)
+        p_home = (p_home_ml * 0.5) + (p_home_poiss * 0.5)
+        p_draw = (p_draw_ml * 0.5) + (p_draw_poiss * 0.5)
+        p_away = (p_away_ml * 0.5) + (p_away_poiss * 0.5)
+        
+        # Normalize sum to 1.0
+        tot = p_home + p_draw + p_away
+        p_home, p_draw, p_away = p_home / tot, p_draw / tot, p_away / tot
+
+        # Markets calculation
+        p_dnb_h = p_home / (p_home + p_away + 1e-9)
+        p_dnb_a = p_away / (p_home + p_away + 1e-9)
         p_o15 = sum(ft_matrix[i, j] for i in range(max_g) for j in range(max_g) if (i + j) > 1.5)
         p_o25 = sum(ft_matrix[i, j] for i in range(max_g) for j in range(max_g) if (i + j) > 2.5)
         p_o35 = sum(ft_matrix[i, j] for i in range(max_g) for j in range(max_g) if (i + j) > 3.5)
@@ -384,15 +439,17 @@ class CompleteMarketCalculator:
         top_score = f"{scores[0][0][0]}-{scores[0][0][1]}"
         top_score_p = scores[0][1] * 100.0
 
-        p_1x = p_home_ml + p_draw_ml
-        p_x2 = p_draw_ml + p_away_ml
+        p_1x = p_home + p_draw
+        p_x2 = p_draw + p_away
 
-        entropy = - (p_home_ml * np.log(p_home_ml + 1e-9) + p_draw_ml * np.log(p_draw_ml + 1e-9) + p_away_ml * np.log(p_away_ml + 1e-9))
-        confidence = round(max(1.0, min(10.0, (max(p_home_ml, p_draw_ml, p_away_ml) * 10.0) + (1.5 - entropy) * 2.0)))
+        # Confidence rating scaled down if stats were missing
+        stat_penalty = 1.0 if (h_found and a_found) else 0.70
+        entropy = - (p_home * np.log(p_home + 1e-9) + p_draw * np.log(p_draw + 1e-9) + p_away * np.log(p_away + 1e-9))
+        confidence = round(max(1.0, min(10.0, ((max(p_home, p_draw, p_away) * 10.0) + (1.5 - entropy) * 2.0) * stat_penalty)))
 
         return {
             "xg": {"home": round(lambda_h, 2), "away": round(lambda_a, 2)},
-            "1x2": {"Home Win": round(p_home_ml * 100, 1), "Draw": round(p_draw_ml * 100, 1), "Away Win": round(p_away_ml * 100, 1)},
+            "1x2": {"Home Win": round(p_home * 100, 1), "Draw": round(p_draw * 100, 1), "Away Win": round(p_away * 100, 1)},
             "dc": {"1X": round(p_1x * 100, 1), "X2": round(p_x2 * 100, 1)},
             "dnb": {"Home": round(p_dnb_h * 100, 1), "Away": round(p_dnb_a * 100, 1)},
             "totals": {"Over 1.5": round(p_o15 * 100, 1), "Over 2.5": round(p_o25 * 100, 1), "Over 3.5": round(p_o35 * 100, 1)},
@@ -402,8 +459,6 @@ class CompleteMarketCalculator:
             "raw_h_stats": h_stats,
             "raw_a_stats": a_stats
         }
-
-
 # =====================================================================
 # 3. SPORTYBET BOOKING CODE RESOLVER & AUDIT ENGINE
 # =====================================================================
