@@ -374,11 +374,9 @@ class CompleteMarketCalculator:
             a_stats["roll_ga"] *= 1.35
             a_stats["roll_pts"] *= 0.60
 
-        features = np.array([[
-            h_stats["roll_gf"], h_stats["roll_ga"], h_stats["roll_pts"],
-            a_stats["roll_gf"], a_stats["roll_ga"], a_stats["roll_pts"]
-        ]])
-
+       safe_pick = "1X Double Chance" if d["dc"]["1X"] >= d["dc"]["X2"] else "X2 Double Chance"
+safe_prob = max(d["dc"]["1X"], d["dc"]["X2"])
+boom_pick = "Over 2.5 Goals" if d["totals"]["Over 2.5"] >= 58 else ("BTTS (GG)" if d["btts"]["GG (Yes)"] >= 58 else f"{h} to Win")
         probs = engine.model.predict_proba(features)[0]
         p_home_ml, p_draw_ml, p_away_ml = probs[0], probs[1], probs[2]
 
