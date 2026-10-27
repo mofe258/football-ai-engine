@@ -356,7 +356,7 @@ class CompleteMarketCalculator:
         h_res = engine._resolve_team_name(h)
         a_res = engine._resolve_team_name(a)
 
-        # Base neutral baseline stats
+        # Baseline neutral stats
         avg_stats = {"roll_gf": 1.25, "roll_ga": 1.25, "roll_pts": 1.15}
         h_found = h_res in engine.team_stats
         a_found = a_res in engine.team_stats
@@ -364,7 +364,7 @@ class CompleteMarketCalculator:
         h_stats = engine.team_stats.get(h_res, avg_stats).copy()
         a_stats = engine.team_stats.get(a_res, avg_stats).copy()
 
-        # Youth / Reserve penalty adjustment (prevents U21 squad distortion)
+        # Adjust ratings if one team is an academy / reserve side
         if CompleteMarketCalculator._is_youth_or_reserve(h) and not CompleteMarketCalculator._is_youth_or_reserve(a):
             h_stats["roll_gf"] *= 0.70
             h_stats["roll_ga"] *= 1.35
@@ -374,28 +374,28 @@ class CompleteMarketCalculator:
             a_stats["roll_ga"] *= 1.35
             a_stats["roll_pts"] *= 0.60
 
-       safe_pick = "1X Double Chance" if d["dc"]["1X"] >= d["dc"]["X2"] else "X2 Double Chance"
-safe_prob = max(d["dc"]["1X"], d["dc"]["X2"])
-boom_pick = "Over 2.5 Goals" if d["totals"]["Over 2.5"] >= 58 else ("BTTS (GG)" if d["btts"]["GG (Yes)"] >= 58 else f"{h} to Win")
+        features = np.array([[
+            h_stats["roll_gf"], h_stats["roll_ga"], h_stats["roll_pts"],
+            a_stats["roll_gf"], a_stats["roll_ga"], a_stats["roll_pts"]
+        ]])
+
         probs = engine.model.predict_proba(features)[0]
         p_home_ml, p_draw_ml, p_away_ml = probs[0], probs[1], probs[2]
 
-        # Natural Poisson Lambda calculation (dynamic home advantage factor: 1.18x instead of 1.55x)
+        # Natural Poisson Lambda calculation (balanced 1.18x home advantage)
         home_advantage = 1.18
         lambda_h = max(0.35, (h_stats["roll_gf"] / 1.35) * (a_stats["roll_ga"] / 1.35) * home_advantage)
         lambda_a = max(0.25, (a_stats["roll_gf"] / 1.35) * (h_stats["roll_ga"] / 1.35) * (1.0 / (home_advantage * 0.95)))
 
-        # Dixon-Coles corrected Poisson bivariate matrix
         max_g = 7
         ft_matrix = np.zeros((max_g, max_g))
-        rho = -0.10  # Low-score correlation adjustment
+        rho = -0.10  # Dixon-Coles correlation adjustment for low-scoring matches
         
         for i in range(max_g):
             for j in range(max_g):
                 p_h = poisson.pmf(i, lambda_h)
                 p_a = poisson.pmf(j, lambda_a)
                 
-                # Apply tau adjustment for low scores (0-0, 1-0, 0-1, 1-1)
                 tau = 1.0
                 if i == 0 and j == 0:
                     tau = 1.0 - (lambda_h * lambda_a * rho)
@@ -410,21 +410,18 @@ boom_pick = "Over 2.5 Goals" if d["totals"]["Over 2.5"] >= 58 else ("BTTS (GG)" 
 
         ft_matrix /= np.sum(ft_matrix)
 
-        # Poisson-derived outcomes
         p_home_poiss = np.sum(np.tril(ft_matrix, -1))
         p_draw_poiss = np.sum(np.diag(ft_matrix))
         p_away_poiss = np.sum(np.triu(ft_matrix, 1))
 
-        # Blend ML model with Dixon-Coles Poisson (50/50 consensus ensemble)
+        # Consensus ensemble between ML features and Dixon-Coles Poisson
         p_home = (p_home_ml * 0.5) + (p_home_poiss * 0.5)
         p_draw = (p_draw_ml * 0.5) + (p_draw_poiss * 0.5)
         p_away = (p_away_ml * 0.5) + (p_away_poiss * 0.5)
         
-        # Normalize sum to 1.0
         tot = p_home + p_draw + p_away
         p_home, p_draw, p_away = p_home / tot, p_draw / tot, p_away / tot
 
-        # Markets calculation
         p_dnb_h = p_home / (p_home + p_away + 1e-9)
         p_dnb_a = p_away / (p_home + p_away + 1e-9)
         p_o15 = sum(ft_matrix[i, j] for i in range(max_g) for j in range(max_g) if (i + j) > 1.5)
@@ -440,7 +437,6 @@ boom_pick = "Over 2.5 Goals" if d["totals"]["Over 2.5"] >= 58 else ("BTTS (GG)" 
         p_1x = p_home + p_draw
         p_x2 = p_draw + p_away
 
-        # Confidence rating scaled down if stats were missing
         stat_penalty = 1.0 if (h_found and a_found) else 0.70
         entropy = - (p_home * np.log(p_home + 1e-9) + p_draw * np.log(p_draw + 1e-9) + p_away * np.log(p_away + 1e-9))
         confidence = round(max(1.0, min(10.0, ((max(p_home, p_draw, p_away) * 10.0) + (1.5 - entropy) * 2.0) * stat_penalty)))
@@ -457,6 +453,8 @@ boom_pick = "Over 2.5 Goals" if d["totals"]["Over 2.5"] >= 58 else ("BTTS (GG)" 
             "raw_h_stats": h_stats,
             "raw_a_stats": a_stats
         }
+
+
 # =====================================================================
 # 3. SPORTYBET BOOKING CODE RESOLVER & AUDIT ENGINE
 # =====================================================================
@@ -584,10 +582,22 @@ def main():
             h, a, comp, kickoff = match["home"], match["away"], match["comp"], match["kickoff"]
             d = CompleteMarketCalculator.evaluate_match(engine, h, a)
 
+            # Balanced selection logic (properly checks favored team without hardcoded home bias)
+            favored_team = h if d["1x2"]["Home Win"] >= d["1x2"]["Away Win"] else a
+            favored_win_prob = max(d["1x2"]["Home Win"], d["1x2"]["Away Win"])
+
             safe_pick = "1X Double Chance" if d["dc"]["1X"] >= d["dc"]["X2"] else "X2 Double Chance"
             safe_prob = max(d["dc"]["1X"], d["dc"]["X2"])
-            boom_pick = "Over 2.5 Goals" if d["totals"]["Over 2.5"] >= 58 else ("BTTS (GG)" if d["btts"]["GG (Yes)"] >= 58 else f"{h} to Win")
-            boom_prob = d["totals"]["Over 2.5"] if "Over" in boom_pick else (d["btts"]["GG (Yes)"] if "BTTS" in boom_pick else d["1x2"]["Home Win"])
+
+            if d["totals"]["Over 2.5"] >= 55.0:
+                boom_pick = "Over 2.5 Goals"
+                boom_prob = d["totals"]["Over 2.5"]
+            elif d["btts"]["GG (Yes)"] >= 55.0:
+                boom_pick = "BTTS (GG)"
+                boom_prob = d["btts"]["GG (Yes)"]
+            else:
+                boom_pick = f"{favored_team} to Win"
+                boom_prob = favored_win_prob
 
             card = f"""<div class="glass-capsule-card"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;"><div style="display: flex; align-items: center; gap: 6px; color: #94A3B8; font-size: 11px; font-weight: 700; text-transform: uppercase;">{ICONS['trophy']} {comp}</div><div style="color: #64748B; font-size: 11.5px; font-weight: 600;">{ICONS['clock']} {kickoff}</div></div><div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;"><h3 style="margin: 0; font-size: clamp(1.2rem, 2vw, 1.7rem); font-weight: 800; color: #FFF; letter-spacing: -0.03em;">{h} <span style="color: #64748B; font-weight: 400;">vs</span> {a}</h3><div><span class="pill-safe">{safe_pick}</span> <span class="pill-boom">{boom_pick}</span></div></div><div class="metrics-bar"><div class="metric-cell"><div class="cell-label">Banker Floor</div><div class="cell-value" style="color: #00F0FF;">{safe_prob:.1f}%</div></div><div class="metric-cell"><div class="cell-label">Boom Opportunity</div><div class="cell-value" style="color: #FF2D55;">{boom_prob:.1f}%</div></div><div class="metric-cell"><div class="cell-label">Sniper Score</div><div class="cell-value">{d['top_score'][0]} ({d['top_score'][1]}%)</div></div><div class="metric-cell"><div class="cell-label">Confidence</div><div class="cell-value">{d['confidence']}/10</div></div></div></div>"""
             render_html(card)
